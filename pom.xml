@@ -10,7 +10,7 @@
     <modules>
         <module>catalog</module>
         <module>inventory</module>
-        <module>customer</module>
+        <module>customer-management</module>
     </modules>
     <packaging>pom</packaging>
 
