@@ -1,7 +1,6 @@
 package com.netcracker.sharlan.beans;
 
 public enum PaymentStatus {
-
     NONE(0), BILLED(1), PAID(2), CANCELED(10);
 
     private int id;
