@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.beans;
 
+import java.util.Objects;
+
 public class Address {
 
     private int id;
@@ -18,6 +20,13 @@ public class Address {
     public Address(int id, String country, String city, String street, int houseNum) {
         this(country, city, street, houseNum);
         this.id = id;
+    }
+
+    /**
+     * case: for frameworks
+     */
+    public Address(){
+
     }
 
     public int getId() {
@@ -58,5 +67,21 @@ public class Address {
 
     public void setHouseNum(int houseNum) {
         this.houseNum = houseNum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return houseNum == address.houseNum &&
+                Objects.equals(country, address.country) &&
+                Objects.equals(city, address.city) &&
+                Objects.equals(street, address.street);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(country, city, street, houseNum);
     }
 }

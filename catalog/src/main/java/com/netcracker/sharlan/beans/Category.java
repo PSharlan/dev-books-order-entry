@@ -1,8 +1,7 @@
 package com.netcracker.sharlan.beans;
 
 public enum Category {
-
-    book(1), program(2), game(3);
+    ; // Categories gonna be added
 
     private int id;
 

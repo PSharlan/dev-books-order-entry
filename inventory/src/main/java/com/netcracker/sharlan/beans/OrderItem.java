@@ -7,11 +7,22 @@ public class OrderItem {
     private int offerId;
     private double offerPrice;
 
+    /**
+     * OrderItem can be created only if Order already exist in Database.
+     * orderId and orderItemId form primary key
+     */
     public OrderItem(int orderId, int orderItemId, int offerId, double offerPrice) {
         this.orderId = orderId;
         this.orderItemId = orderItemId;
         this.offerId = offerId;
         this.offerPrice = offerPrice;
+    }
+
+    /**
+     * case: for frameworks
+     */
+    public OrderItem(){
+
     }
 
     public int getOrderId() {

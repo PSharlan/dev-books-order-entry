@@ -1,5 +1,4 @@
 package com.netcracker.sharlan.beans;
-
 import java.sql.Timestamp;
 
 public class Order {
@@ -13,6 +12,10 @@ public class Order {
     private Timestamp creationTS;
     private Timestamp closingTS;
 
+
+    /**
+     * Case: creation of new Order before insert
+     */
     public Order(int customerId, int itemsAmount, double priceAmount, PaymentStatus paymentStatus, OrderStatus orderStatus) {
         this.customerId = customerId;
         this.itemsAmount = itemsAmount;
@@ -21,15 +24,20 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    /**
+     * Case: creation of already existing at database Order
+     */
     public Order(int id, int customerId, int itemsAmount, double priceAmount, PaymentStatus paymentStatus, OrderStatus orderStatus, Timestamp creationTS) {
         this(customerId, itemsAmount, priceAmount, paymentStatus, orderStatus);
         this.id = id;
         this.creationTS = creationTS;
     }
 
-    public Order(int id, int customerId, int itemsAmount, double priceAmount, PaymentStatus paymentStatus, OrderStatus orderStatus, Timestamp creationTS, Timestamp closingTS) {
-        this(id, customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creationTS);
-        this.closingTS = closingTS;
+    /**
+     * case: for frameworks
+     */
+    public Order(){
+
     }
 
     public int getId() {
@@ -95,4 +103,6 @@ public class Order {
     public void setClosingTS(Timestamp closingTS) {
         this.closingTS = closingTS;
     }
+
+
 }
