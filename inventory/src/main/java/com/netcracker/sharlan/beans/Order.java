@@ -24,6 +24,7 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+
     /**
      * Case: creation of already existing at database Order
      */
