@@ -1,10 +1,11 @@
-package com.netcracker.sharlan.beans;
+package com.netcracker.sharlan.bean;
 
 import java.util.Objects;
 
 public class Offer {
 
     private int id;
+    private String name;
     private String description;
     private Category category;
     private double price;
@@ -12,7 +13,8 @@ public class Offer {
     /**
      * Case: creation of new Offer before insert
      */
-    public Offer(String description, Category category, double price) {
+    public Offer(String name, String description, Category category, double price) {
+        this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
@@ -21,8 +23,8 @@ public class Offer {
     /**
      * Case: creation of already existing at database Offer
      */
-    public Offer(int id, String description, Category category, double price) {
-        this(description, category, price);
+    public Offer(int id, String name, String description, Category category, double price) {
+        this(name, description, category, price);
         this.id = id;
     }
 
@@ -41,12 +43,12 @@ public class Offer {
         this.id = id;
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Category getCategory() {
@@ -65,18 +67,4 @@ public class Offer {
         this.price = price;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Offer offer = (Offer) o;
-        return Double.compare(offer.price, price) == 0 &&
-                Objects.equals(description, offer.description) &&
-                category == offer.category;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(description, category, price);
-    }
 }

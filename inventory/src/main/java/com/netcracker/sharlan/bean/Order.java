@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.beans;
+package com.netcracker.sharlan.bean;
 import java.sql.Timestamp;
 
 public class Order {
