@@ -1,18 +1,23 @@
 package com.netcracker.sharlan.bean;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="category")
 public class Category {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
 
     @Column(name="name", nullable = false, unique = true)
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    private Set<Offer> offers = new HashSet<Offer>();
 
     public Category(String name){
         this.name = name;
