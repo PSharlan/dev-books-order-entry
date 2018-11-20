@@ -1,13 +1,27 @@
 package com.netcracker.sharlan.bean;
 
-import java.util.Objects;
+import javax.persistence.*;
 
+@Entity
+@Table(name="offer")
 public class Offer {
 
+    @Id
+    @GeneratedValue
+    @Column(name="id")
     private int id;
+
+    @Column(name="name", nullable = false)
     private String name;
+
+    @Column(name="description", nullable = false)
     private String description;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Column(name="category", nullable = false)
     private Category category;
+
+    @Column(name="price", nullable = false)
     private double price;
 
     /**
@@ -67,4 +81,11 @@ public class Offer {
         this.price = price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

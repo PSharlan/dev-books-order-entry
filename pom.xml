@@ -14,4 +14,16 @@
     </modules>
     <packaging>pom</packaging>
 
+    <properties>
+        <hibernate.version>4.3.11.Final</hibernate.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>
