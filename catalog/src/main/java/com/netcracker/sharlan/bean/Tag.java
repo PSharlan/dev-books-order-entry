@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tag")
-public class Tag {
+public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
