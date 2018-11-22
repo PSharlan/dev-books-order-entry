@@ -25,7 +25,7 @@ public class Offer extends BaseEntity{
     @Column(name="price", nullable = false)
     private double price;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "tag_offer",
             joinColumns = { @JoinColumn(name = "offer_id") },
