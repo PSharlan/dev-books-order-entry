@@ -18,7 +18,7 @@ public class Offer extends BaseEntity{
     @Column(name="description", nullable = false)
     private String description;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="category", nullable = false)
     private Category category;
 
