@@ -1,10 +1,30 @@
 package com.netcracker.sharlan.bean;
 
-public class Category {
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
+@Table(name="category")
+public class Category extends BaseEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
+    private int id;
+
+    @Column(name="name", nullable = false, unique = true)
     private String name;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    private Set<Offer> offers = new HashSet<Offer>();
+
     public Category(String name){
+        this.name = name;
+    }
+
+    public Category(int id, String name){
+        this.id = id;
         this.name = name;
     }
 
@@ -18,6 +38,14 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
