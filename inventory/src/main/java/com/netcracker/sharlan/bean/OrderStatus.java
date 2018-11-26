@@ -12,4 +12,17 @@ public enum OrderStatus {
     public int getId() {
         return id;
     }
+
+    public OrderStatus getStatusById(int id){
+        switch (id){
+            case 0: return NEW;
+            case 1: return PENDING;
+            case 2: return DELIVERY;
+            case 3: return CLOSED;
+            case 10: return CANCELED;
+            default: return null;
+
+        }
+    }
+
 }

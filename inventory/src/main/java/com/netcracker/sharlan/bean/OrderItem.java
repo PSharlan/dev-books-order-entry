@@ -1,29 +1,49 @@
 package com.netcracker.sharlan.bean;
 
-public class OrderItem {
+import javax.persistence.*;
+import java.util.Objects;
 
+@Entity
+@Table(name="order_item")
+public class OrderItem extends BaseEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private int id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="order_id", nullable = false)
+    private Order order;
+
+    @Column(name="offer_id")
+    private int offerId;
+
+    @Column(name="name")
     private String name;
+
+    @Column(name="description")
     private String description;
+
+    @Column(name="category")
     private String category;
+
+    @Column(name="price")
     private double price;
-    private int orderId;
 
 
-    public OrderItem(int id, String name, String description, String category, double price) {
-        this.id = id;
+    public OrderItem(int offerId, String name, String description, String category, double price) {
+        this.offerId = offerId;
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
     }
 
-    /**
-     * orderId and id form primary key
-     */
-    public OrderItem(int id, String name, String description, String category, double price, int orderId) {
-        this(id, name, description, category, price);
-        this.orderId = orderId;
+    public OrderItem(int id, Order order, int offerId, String name, String description, String category, double price) {
+        this(offerId, name, description, category, price);
+        this.id = id;
+        this.order = order;
     }
 
     /**
@@ -39,6 +59,22 @@ public class OrderItem {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public int getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(int offerId) {
+        this.offerId = offerId;
     }
 
     public String getName() {
@@ -73,11 +109,35 @@ public class OrderItem {
         this.price = price;
     }
 
-    public int getOrderId() {
-        return orderId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return id == orderItem.id &&
+                order == orderItem.order &&
+                offerId == orderItem.offerId &&
+                Double.compare(orderItem.price, price) == 0 &&
+                Objects.equals(name, orderItem.name) &&
+                Objects.equals(description, orderItem.description) &&
+                Objects.equals(category, orderItem.category);
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, order, offerId, name, description, category, price);
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" +
+                "id=" + id +
+                ", orderId=" + order.getId() +
+                ", offerId=" + offerId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

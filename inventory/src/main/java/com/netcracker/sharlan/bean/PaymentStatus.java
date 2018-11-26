@@ -12,4 +12,14 @@ public enum PaymentStatus {
     public int getId() {
         return id;
     }
+
+    public PaymentStatus getStatusById(int id){
+        switch (id){
+            case 0: return NONE;
+            case 1: return BILLED;
+            case 2: return PAID;
+            case 10: return CANCELED;
+            default: return null;
+        }
+    }
 }
