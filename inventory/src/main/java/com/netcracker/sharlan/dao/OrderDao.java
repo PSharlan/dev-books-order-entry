@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Order;
 
@@ -10,13 +10,13 @@ public interface OrderDao {
 
     Set<Order> findAllOrders();
 
-    Order findById(int id);
+    Order findById(long id);
 
     Order update(Order order);
 
     void delete(Order order);
 
-    void delete(int id);
+    void delete(long id);
 
     void beginTransaction();
 

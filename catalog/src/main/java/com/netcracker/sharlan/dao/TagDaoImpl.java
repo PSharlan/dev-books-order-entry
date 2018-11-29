@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Tag;
 
@@ -10,7 +10,7 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
         setPersistentClass(Tag.class);
     }
     @Override
-    public Tag findById(int id) {
+    public Tag findById(long id) {
         return findOneById(id);
     }
 

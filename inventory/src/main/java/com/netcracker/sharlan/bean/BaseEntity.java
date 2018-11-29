@@ -1,23 +1,31 @@
 package com.netcracker.sharlan.bean;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
-public class BaseEntity implements Serializable {
+@MappedSuperclass
+public abstract class BaseEntity implements Serializable {
 
-    private long baseId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
+    private Long id;
 
-    public long getBaseId() {
-        return baseId;
+    public long getId() {
+        if(id == null){
+            return 0;
+        }
+        return id;
     }
 
-    public void setBaseId(long id) {
-        this.baseId = id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         return "BaseEntity{" +
-                "baseId=" + baseId +
+                "id=" + id +
                 '}';
     }
 }

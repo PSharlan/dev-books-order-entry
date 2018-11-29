@@ -10,7 +10,7 @@
          each unit must have a unique name.
     -->
 
-    <persistence-unit name="persistence">
+    <persistence-unit name="inventoryPersistenceUnit">
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

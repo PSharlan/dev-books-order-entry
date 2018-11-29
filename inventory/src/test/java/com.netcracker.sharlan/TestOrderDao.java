@@ -4,7 +4,7 @@ import com.netcracker.sharlan.bean.Order;
 import com.netcracker.sharlan.bean.OrderItem;
 import com.netcracker.sharlan.bean.OrderStatus;
 import com.netcracker.sharlan.bean.PaymentStatus;
-import com.netcracker.sharlan.hibernate.dao.*;
+import com.netcracker.sharlan.dao.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
@@ -26,15 +26,12 @@ public class TestOrderDao {
     private OrderDao orderDao;
 
     private Order order;
-    private OrderItem orderItem;
-    private OrderStatus orderStatus;
-    private PaymentStatus paymentStatus;
     private List<OrderItem> items;
 
     @BeforeEach
     public void setUp() {
         System.out.println("setUp()");
-        orderDao = new OrderDaoImpl();
+
 
         items = new ArrayList<>();
         items.add(new OrderItem(5, "firstOffer", "some description", "category1", 111.11));
@@ -46,6 +43,7 @@ public class TestOrderDao {
         System.out.println("----- Test order: " + order);
         System.out.println("----- Test items: " + order.getItems());
 
+        orderDao = new OrderDaoImpl();
         orderDao.beginTransaction();
     }
 
@@ -151,7 +149,7 @@ public class TestOrderDao {
         Order savedOrder = orderDao.save(order);
         System.out.println("----- Saved order: " + savedOrder);
 
-        int id = savedOrder.getId();
+        long id = savedOrder.getId();
         orderDao.delete(id);
         Order deletedOrder = orderDao.findById(id);
 

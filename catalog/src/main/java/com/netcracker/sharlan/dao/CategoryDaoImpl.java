@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Category;
 
@@ -12,7 +12,7 @@ public class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDa
     }
 
     @Override
-    public Category findById(int id) {
+    public Category findById(long id) {
         return findOneById(id);
     }
 

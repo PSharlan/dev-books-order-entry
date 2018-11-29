@@ -10,11 +10,6 @@ import java.util.Set;
 @Table(name="`order`")
 public class Order extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
-
     @Column(name="customer_id", nullable = false)
     private int customerId;
 
@@ -66,15 +61,6 @@ public class Order extends BaseEntity{
         System.out.println("before setItems()");
         this.setItems(items);
         System.out.println("after setItems()");
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getCustomerId() {
@@ -159,7 +145,7 @@ public class Order extends BaseEntity{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id &&
+        return getId() == order.getId() &&
                 customerId == order.customerId &&
                 itemsAmount == order.itemsAmount &&
                 Double.compare(order.priceAmount, priceAmount) == 0 &&
@@ -169,13 +155,13 @@ public class Order extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creationTS, closingTS);
+        return Objects.hash(getId(), customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creationTS, closingTS);
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", customerId=" + customerId +
                 ", itemsAmount=" + itemsAmount +
                 ", priceAmount=" + priceAmount +

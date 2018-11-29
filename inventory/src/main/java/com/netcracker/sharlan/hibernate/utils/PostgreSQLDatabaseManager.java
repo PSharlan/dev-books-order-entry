@@ -6,14 +6,26 @@ import javax.persistence.Persistence;
 
 public class PostgreSQLDatabaseManager implements DatabaseManager{
 
+    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.
+            createEntityManagerFactory("inventoryPersistenceUnit");
+
+    private EntityManager entityManager;
+
+    private PostgreSQLDatabaseManager() {
+        entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    }
+
     @Override
     public EntityManager getEntityManager() {
-
-        EntityManagerFactory entityManagerFactory = Persistence.
-                                createEntityManagerFactory("persistence");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-
         return entityManager;
+    }
+
+    private static class Holder{
+        private static final DatabaseManager INSTANCE = new PostgreSQLDatabaseManager();
+    }
+
+    public static DatabaseManager getInstance(){
+        return PostgreSQLDatabaseManager.Holder.INSTANCE;
     }
 
 }

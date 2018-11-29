@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Order;
 
@@ -22,7 +22,7 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     }
 
     @Override
-    public Order findById(int id) {
+    public Order findById(long id) {
         return findOneById(id);
     }
 
@@ -37,7 +37,7 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(long id) {
         delete(findById(id));
     }
 

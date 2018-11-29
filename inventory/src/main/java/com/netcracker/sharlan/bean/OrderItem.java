@@ -7,11 +7,6 @@ import java.util.Objects;
 @Table(name="order_item")
 public class OrderItem extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id", nullable = false)
     private Order order;
@@ -40,9 +35,8 @@ public class OrderItem extends BaseEntity{
         this.price = price;
     }
 
-    public OrderItem(int id, Order order, int offerId, String name, String description, String category, double price) {
+    public OrderItem(Order order, int offerId, String name, String description, String category, double price) {
         this(offerId, name, description, category, price);
-        this.id = id;
         this.order = order;
     }
 
@@ -51,14 +45,6 @@ public class OrderItem extends BaseEntity{
      */
     public OrderItem(){
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Order getOrder() {
@@ -114,7 +100,7 @@ public class OrderItem extends BaseEntity{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderItem orderItem = (OrderItem) o;
-        return id == orderItem.id &&
+        return getId() == orderItem.getId() &&
                 order == orderItem.order &&
                 offerId == orderItem.offerId &&
                 Double.compare(orderItem.price, price) == 0 &&
@@ -125,13 +111,13 @@ public class OrderItem extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, order, offerId, name, description, category, price);
+        return Objects.hash(getId(), order, offerId, name, description, category, price);
     }
 
     @Override
     public String toString() {
         return "OrderItem{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", orderId=" + order.getId() +
                 ", offerId=" + offerId +
                 ", name='" + name + '\'' +

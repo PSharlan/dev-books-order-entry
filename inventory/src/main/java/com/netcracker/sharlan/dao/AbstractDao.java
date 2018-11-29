@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.hibernate.utils.DatabaseManager;
 import com.netcracker.sharlan.hibernate.utils.PostgreSQLDatabaseManager;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class AbstractDao<T extends Serializable> {
 
-    private DatabaseManager dm = new PostgreSQLDatabaseManager();
+    private DatabaseManager dm = PostgreSQLDatabaseManager.getInstance();
     private EntityManager em;
     private Class<T> persistentClass;
 
@@ -21,21 +21,22 @@ public abstract class AbstractDao<T extends Serializable> {
         return em;
     }
 
-    public T findOneById(int id) {
-        return (T) em.find(persistentClass, id);
+    public T findOneById(long id) {
+        return em.find(persistentClass, id);
     }
 
     public List<T> findAll() {
-        return em.createQuery("SELECT e FROM " + persistentClass.getClass().getSimpleName() + " e").getResultList();
+        System.out.println("simple name: " + persistentClass.getSimpleName());
+        return em.createQuery("SELECT e FROM " + persistentClass.getSimpleName() + " e", persistentClass).getResultList();
     }
 
     public T create(T entity) {
         em.persist(entity);
-        return (T) entity;
+        return entity;
     }
 
     public T merge(T entity) {
-        return (T) em.merge(entity);
+        return em.merge(entity);
     }
 
 

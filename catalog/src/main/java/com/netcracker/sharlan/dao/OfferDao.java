@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface OfferDao {
 
-    Offer findById(int id);
+    Offer findById(long id);
 
     Offer save(Offer offer);
 
@@ -16,7 +16,7 @@ public interface OfferDao {
 
     void delete(Offer offer);
 
-    void delete(int id);
+    void delete(long id);
 
     Set<Offer> findByTag(Tag tag);
 

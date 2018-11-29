@@ -3,7 +3,7 @@ package com.netcracker.sharlan;
 import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
 import com.netcracker.sharlan.bean.Tag;
-import com.netcracker.sharlan.hibernate.dao.*;
+import com.netcracker.sharlan.dao.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
@@ -92,7 +92,7 @@ public class TestOfferDao {
         Offer savedOffer = offerDao.save(offer);
         System.out.println("----- Saved offer: " + savedOffer);
 
-        int id = savedOffer.getId();
+        long id = savedOffer.getId();
         offerDao.delete(savedOffer);
         Offer deletedOffer = offerDao.findById(id);
 
@@ -101,6 +101,7 @@ public class TestOfferDao {
 
     @Test
     public void testFindOffersByTag(){
+        System.out.println("->testFindOffersByTag()");
         Set<Tag> tags = new HashSet<>();
         tags.add(tag);
 

@@ -8,11 +8,6 @@ import java.util.Set;
 @Table(name="category")
 public class Category extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
-
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
@@ -23,8 +18,8 @@ public class Category extends BaseEntity{
         this.name = name;
     }
 
-    public Category(int id, String name){
-        this.id = id;
+    public Category(long id, String name){
+        setId(id);
         this.name = name;
     }
 
@@ -38,14 +33,6 @@ public class Category extends BaseEntity{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Set<Offer> getOffers() {

@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
@@ -14,7 +14,7 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
     }
 
     @Override
-    public Offer findById(int id) {
+    public Offer findById(long id) {
         return findOneById(id);
     }
 
@@ -34,7 +34,7 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(long id) {
        delete(findById(id));
     }
 

@@ -1,13 +1,12 @@
-package com.netcracker.sharlan.hibernate.dao;
+package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.bean.Category;
-import com.netcracker.sharlan.bean.Offer;
 
 import java.util.Set;
 
 public interface CategoryDao {
 
-    Category findById(int id);
+    Category findById(long id);
 
     Category save(Category category);
 
