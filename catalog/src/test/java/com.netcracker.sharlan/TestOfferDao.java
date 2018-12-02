@@ -4,12 +4,15 @@ import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
 import com.netcracker.sharlan.bean.Tag;
 import com.netcracker.sharlan.dao.*;
+import com.netcracker.sharlan.hibernate.utils.DatabaseManager;
+import com.netcracker.sharlan.hibernate.utils.PostgreSQLDatabaseManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,50 +24,54 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestOfferDao {
 
     private OfferDao offerDao;
+    private TagDao tagDao;
+    private CategoryDao categoryDao;
 
     private Offer offer;
     private Category category;
-    private Tag tag;
+    private Tag tag1;
+    private Tag tag2;
+    private Set<Tag> tags;
 
     @BeforeEach
     public void setUp() {
-        System.out.println("setUp()");
         offerDao = new OfferDaoImpl();
+        tagDao = new TagDaoImpl();
+        categoryDao = new CategoryDaoImpl();
 
-        tag = new Tag("testTag");
-        category = new Category("testCategory");
-        offer = new Offer("testOffer",
+        tag1 = new Tag("TEST_TAG1");
+        tag2 = new Tag("TEST_TAG2");
+        category = new Category("TEST_CATEGORY");
+        offer = new Offer("TEST_OFFER",
                         "testOfferDescription", category, 222.22);
-
-        System.out.println("----- Test tag: " + tag);
-        System.out.println("----- Test category: " + category);
-        System.out.println("----- Test offer: " + offer);
-
-        offerDao.beginTransaction();
+        tags = new HashSet<Tag>();
+        tags.add(tag1);
+        tags.add(tag2);
+        offer.setTags(tags);
     }
 
     @AfterEach
     public void end(){
-        System.out.println("end()");
-        offerDao.cancel();
+
+        offerDao.delete(offer);
+        for (Tag tag: tags) {
+            tagDao.delete(tag);
+        }
+        categoryDao.delete(category);
     }
 
 
     @Test
     public void testSaveOffer() {
-        System.out.println("->testSaveOffer()");
-        Offer savedOffer = offerDao.save(offer);
-        System.out.println("----- Saved offer: " + offer);
+        offerDao.save(offer);
 
         assertNotNull(offer.getId());
     }
 
     @Test
     public void testFindOffer() {
-        System.out.println("->testFindOffer()");
-        Offer savedOffer = offerDao.save(offer);
-        Offer foundOffer = offerDao.findById(savedOffer.getId());
-        System.out.println("----- Found offer: " + foundOffer);
+        offerDao.save(offer);
+        Offer foundOffer = offerDao.findById(offer.getId());
 
         assertNotNull(foundOffer.getId());
         assertNotNull(foundOffer.getName());
@@ -72,71 +79,52 @@ public class TestOfferDao {
 
     @Test
     public void testUpdateOffer() {
-        System.out.println("->testUpdateOffer()");
-        Offer savedOffer = offerDao.save(offer);
-        System.out.println("----- Saved offer: " + savedOffer);
-
-        savedOffer.setName("updatedName");
-        Offer updatedOffer = offerDao.update(savedOffer);
-        System.out.println("----- Updated offer: " + updatedOffer);
+        offerDao.save(offer);
+        offer.setName("updatedName");
+        Offer updatedOffer = offerDao.update(offer);
 
         assertNotNull(updatedOffer);
-        assertEquals(savedOffer.getId(), updatedOffer.getId());
-        System.out.println("saved name: " + savedOffer.getName() + " | updated name: " + updatedOffer.getName());
-        assertEquals(savedOffer.getName(), updatedOffer.getName());
+        assertEquals(offer.getId(), updatedOffer.getId());
+        assertEquals(offer.getName(), updatedOffer.getName());
     }
 
     @Test
     public void testDeleteOffer() {
-        System.out.println("->testDeleteOffer()");
-        Offer savedOffer = offerDao.save(offer);
-        System.out.println("----- Saved offer: " + savedOffer);
-
-        long id = savedOffer.getId();
-        offerDao.delete(savedOffer);
+        offerDao.save(offer);
+        long id = offer.getId();
+        offerDao.delete(offer);
         Offer deletedOffer = offerDao.findById(id);
-
         assertNull(deletedOffer);
     }
 
     @Test
     public void testFindOffersByTag(){
-        System.out.println("->testFindOffersByTag()");
-        Set<Tag> tags = new HashSet<>();
-        tags.add(tag);
-
         offer.setTags(tags);
         offer = offerDao.save(offer);
-        System.out.println("saved offer with tags: " + offer);
         tags = offer.getTags();
         for (Tag t: tags) {
-            tag = t;
+            assertNotNull(offerDao.findByTag(t));
         }
-        System.out.println("Tag: " + tag);
-        assertNotNull(offerDao.findByTag(tag));
-
     }
 
     @Test
     public void testFindOffersByCategory(){
         offer = offerDao.save(offer);
-        System.out.println("saved offer with category: " + offer);
         category = offer.getCategory();
-        System.out.println("Category: " + category);
         assertNotNull(offerDao.findByCategory(category));
     }
 
     @Test
     public void testUpdateOfferCategory(){
         offer = offerDao.save(offer);
-        System.out.println("saved offer with category: " + offer);
-
-        Category newCategory = new Category("newTestCategory");
-
-        System.out.println("New Category: " + newCategory);
+        Category newCategory = new Category("NEW_TEST_CATEGORY");
         offer = offerDao.updateCategory(offer, newCategory);
 
-        assertNotEquals(category.getName(), offer.getCategory().getName());
+        assertEquals(offer.getCategory().getName(), "NEW_TEST_CATEGORY");
+
+        newCategory = offer.getCategory();
+        offerDao.updateCategory(offer, category);
+        categoryDao.delete(newCategory);
     }
 
 

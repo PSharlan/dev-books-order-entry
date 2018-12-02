@@ -32,9 +32,9 @@ public interface OfferDao {
 
     Offer updateCategory(Offer offer, Category category);
 
-    void beginTransaction();
-
-    void endTransaction();
-
-    void cancel();
+//    void beginTransaction();
+//
+//    void endTransaction();
+//
+//    void cancel();
 }

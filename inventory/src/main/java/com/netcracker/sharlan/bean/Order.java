@@ -57,10 +57,7 @@ public class Order extends BaseEntity{
      */
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus, List<OrderItem> items) {
         this(customerId, paymentStatus, orderStatus);
-        System.out.println("constructor w/o List used");
-        System.out.println("before setItems()");
         this.setItems(items);
-        System.out.println("after setItems()");
     }
 
     public int getCustomerId() {

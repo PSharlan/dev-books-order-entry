@@ -16,9 +16,9 @@ public interface CategoryDao {
 
     void delete(Category category);
 
-    void beginTransaction();
-
-    void endTransaction();
-
-    void cancel();
+//    void beginTransaction();
+//
+//    void endTransaction();
+//
+//    void cancel();
 }

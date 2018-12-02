@@ -38,18 +38,4 @@ public class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDa
         remove(category);
     }
 
-    @Override
-    public void beginTransaction() {
-        begin();
-    }
-
-    @Override
-    public void endTransaction() {
-        commit();
-    }
-
-    @Override
-    public void cancel() {
-        rollBack();
-    }
 }

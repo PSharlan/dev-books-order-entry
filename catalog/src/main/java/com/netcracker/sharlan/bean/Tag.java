@@ -41,6 +41,14 @@ public class Tag extends BaseEntity {
         this.name = name;
     }
 
+    public Set<Offer> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(Set<Offer> offers) {
+        this.offers = offers;
+    }
+
     @Override
     public String toString() {
         return name;

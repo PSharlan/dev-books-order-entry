@@ -22,26 +22,38 @@ public abstract class AbstractDao<T extends Serializable> {
     }
 
     public T findOneById(long id) {
-        return em.find(persistentClass, id);
+        begin();
+        T t = em.find(persistentClass, id);
+        commit();
+        return t;
     }
 
     public List<T> findAll() {
-        System.out.println("simple name: " + persistentClass.getSimpleName());
-        return em.createQuery("SELECT e FROM " + persistentClass.getSimpleName() + " e", persistentClass).getResultList();
+        begin();
+        List<T> list = em.createQuery("SELECT e FROM " + persistentClass.getSimpleName() + " e", persistentClass).getResultList();
+        commit();
+        return list;
     }
 
     public T create(T entity) {
+        begin();
         em.persist(entity);
+        commit();
         return entity;
     }
 
     public T merge(T entity) {
-        return em.merge(entity);
+        begin();
+        T en = em.merge(entity);
+        commit();
+        return en;
     }
 
 
     public void remove(T entity) {
-        em.remove(entity);
+        begin();
+        em.remove(em.merge(entity));
+        commit();
     }
 
     public void begin(){
@@ -51,8 +63,6 @@ public abstract class AbstractDao<T extends Serializable> {
 
     public void commit(){
         em.getTransaction().commit();
-        em.close();
-        em.getEntityManagerFactory().close();
     }
 
     public void rollBack(){

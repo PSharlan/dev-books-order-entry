@@ -18,9 +18,4 @@ public interface OrderDao {
 
     void delete(long id);
 
-    void beginTransaction();
-
-    void endTransaction();
-
-    void cancel();
 }

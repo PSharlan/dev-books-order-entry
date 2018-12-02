@@ -41,18 +41,4 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         delete(findById(id));
     }
 
-    @Override
-    public void beginTransaction() {
-        begin();
-    }
-
-    @Override
-    public void endTransaction() {
-        commit();
-    }
-
-    @Override
-    public void cancel() {
-        rollBack();
-    }
 }

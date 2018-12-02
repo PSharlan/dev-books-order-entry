@@ -41,17 +41,26 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
 
     @Override
     public Set<Offer> findByTag(Tag tag) {
-        return new HashSet<Offer>(getEntityManager().createQuery("select o from Offer o join o.tags t where t.id = " + tag.getId()).getResultList());
+        begin();
+        HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("select o from Offer o join o.tags t where t.id = " + tag.getId()).getResultList());
+        commit();
+        return set;
     }
 
     @Override
     public Set<Offer> findByCategory(Category category) {
-        return new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.category = " + category.getId()).getResultList());
+        begin();
+        HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.category = " + category.getId()).getResultList());
+        commit();
+        return set;
     }
 
     @Override
     public Set<Offer> findByPrice(double price) {
-        return new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.price = " + price).getResultList());
+        begin();
+        HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.price = " + price).getResultList());
+        commit();
+        return set;
     }
 
     @Override
@@ -78,18 +87,18 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
         return merge(offer);
     }
 
-    @Override
-    public void beginTransaction() {
-        begin();
-    }
-
-    @Override
-    public void endTransaction() {
-        commit();
-    }
-
-    @Override
-    public void cancel() {
-        rollBack();
-    }
+//    @Override
+//    public void beginTransaction() {
+//        begin();
+//    }
+//
+//    @Override
+//    public void endTransaction() {
+//        commit();
+//    }
+//
+//    @Override
+//    public void cancel() {
+//        rollBack();
+//    }
 }

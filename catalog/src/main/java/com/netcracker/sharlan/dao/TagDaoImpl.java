@@ -36,18 +36,4 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
         remove(tag);
     }
 
-    @Override
-    public void beginTransaction() {
-        begin();
-    }
-
-    @Override
-    public void endTransaction() {
-        commit();
-    }
-
-    @Override
-    public void cancel() {
-        rollBack();
-    }
 }
