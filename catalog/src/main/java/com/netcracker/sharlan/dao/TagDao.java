@@ -16,10 +16,4 @@ public interface TagDao {
     Tag update(Tag tag);
 
     void delete(Tag tag);
-
-//    void beginTransaction();
-//
-//    void endTransaction();
-//
-//    void cancel();
 }

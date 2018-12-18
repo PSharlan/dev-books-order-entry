@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name="`order`")
@@ -28,10 +27,10 @@ public class Order extends BaseEntity{
     private OrderStatus orderStatus;
 
     @Column(name="creation_time")
-    private Timestamp creationTS;
+    private Timestamp creation;
 
     @Column(name="closing_time")
-    private Timestamp closingTS;
+    private Timestamp closing;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
@@ -58,6 +57,24 @@ public class Order extends BaseEntity{
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus, List<OrderItem> items) {
         this(customerId, paymentStatus, orderStatus);
         this.setItems(items);
+        updateItemsInfo();
+    }
+
+    public void updateItemsInfo(){
+        int amount = 0;
+        double price = 0;
+        for (OrderItem item : items) {
+            amount++;
+            price += item.getPrice();
+        }
+        this.itemsAmount = amount;
+        this.priceAmount = price;
+//        this.items = items;
+
+        //before insert items have to know about their order
+        for (OrderItem item : items) {
+            item.setOrder(this);
+        }
     }
 
     public int getCustomerId() {
@@ -100,20 +117,20 @@ public class Order extends BaseEntity{
         this.orderStatus = orderStatus;
     }
 
-    public Timestamp getCreationTS() {
-        return creationTS;
+    public Timestamp getCreation() {
+        return creation;
     }
 
-    public void setCreationTS(Timestamp creationTS) {
-        this.creationTS = creationTS;
+    public void setCreation(Timestamp creationTS) {
+        this.creation = creationTS;
     }
 
-    public Timestamp getClosingTS() {
-        return closingTS;
+    public Timestamp getClosing() {
+        return closing;
     }
 
-    public void setClosingTS(Timestamp closingTS) {
-        this.closingTS = closingTS;
+    public void setClosing(Timestamp closingTS) {
+        this.closing = closingTS;
     }
 
     public List<OrderItem> getItems() {
@@ -121,20 +138,7 @@ public class Order extends BaseEntity{
     }
 
     public void setItems(List<OrderItem> items) {
-        int amount = 0;
-        double price = 0;
-        for (OrderItem item : items) {
-            amount++;
-            price += item.getPrice();
-        }
-        this.itemsAmount = amount;
-        this.priceAmount = price;
         this.items = items;
-
-        //before insert items have to know about their order
-        for (OrderItem item : items) {
-            item.setOrder(this);
-        }
     }
 
     @Override
@@ -152,7 +156,7 @@ public class Order extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creationTS, closingTS);
+        return Objects.hash(getId(), customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creation, closing);
     }
 
     @Override
@@ -164,8 +168,8 @@ public class Order extends BaseEntity{
                 ", priceAmount=" + priceAmount +
                 ", paymentStatus=" + paymentStatus +
                 ", orderStatus=" + orderStatus +
-                ", creationTS=" + creationTS +
-                ", closingTS=" + closingTS +
+                ", creationTS=" + creation +
+                ", closingTS=" + closing +
                 '}';
     }
 }

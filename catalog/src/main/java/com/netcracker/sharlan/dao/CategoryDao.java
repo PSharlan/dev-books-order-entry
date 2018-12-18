@@ -15,10 +15,4 @@ public interface CategoryDao {
     Category update(Category category);
 
     void delete(Category category);
-
-//    void beginTransaction();
-//
-//    void endTransaction();
-//
-//    void cancel();
 }

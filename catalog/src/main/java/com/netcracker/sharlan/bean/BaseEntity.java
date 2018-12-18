@@ -1,10 +1,9 @@
 package com.netcracker.sharlan.bean;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable {
+public abstract class BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,9 +11,6 @@ public abstract class BaseEntity implements Serializable {
     private Long id;
 
     public long getId() {
-        if(id == null){
-            return 0;
-        }
         return id;
     }
 

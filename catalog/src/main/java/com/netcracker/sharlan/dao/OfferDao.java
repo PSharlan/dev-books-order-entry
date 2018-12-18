@@ -31,10 +31,4 @@ public interface OfferDao {
     Offer updateTags(Offer offer, Set<Tag> tags);
 
     Offer updateCategory(Offer offer, Category category);
-
-//    void beginTransaction();
-//
-//    void endTransaction();
-//
-//    void cancel();
 }

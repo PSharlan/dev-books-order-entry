@@ -38,6 +38,7 @@ public class TestOrderDao {
         order = new Order(3, PaymentStatus.BILLED, OrderStatus.CLOSED, items);
 
         orderDao = new OrderDaoImpl();
+
     }
 
     @AfterEach
@@ -106,6 +107,7 @@ public class TestOrderDao {
         items.add(new OrderItem(1, "new item for updated", "some description", "category5", 0.5));
 
         savedOrder.setItems(items);
+        savedOrder.updateItemsInfo();
 
         Order updatedOrder = orderDao.update(savedOrder);
 

@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 public class Customer {
