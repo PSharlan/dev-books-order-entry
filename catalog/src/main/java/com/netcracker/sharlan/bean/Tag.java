@@ -9,11 +9,6 @@ import java.util.Set;
 @Table(name = "tag")
 public class Tag extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
-
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
@@ -29,8 +24,8 @@ public class Tag extends BaseEntity {
         this.name = name;
     }
 
-    public Tag(int id, String name){
-        this.id = id;
+    public Tag(long id, String name){
+        setId(id);
         this.name = name;
     }
 
@@ -46,12 +41,12 @@ public class Tag extends BaseEntity {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public Set<Offer> getOffers() {
+        return offers;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOffers(Set<Offer> offers) {
+        this.offers = offers;
     }
 
     @Override

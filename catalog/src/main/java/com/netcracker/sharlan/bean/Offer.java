@@ -7,11 +7,6 @@ import java.util.*;
 @Table(name="offer")
 public class Offer extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
-
     @Column(name="name", nullable = false)
     private String name;
 
@@ -46,9 +41,9 @@ public class Offer extends BaseEntity{
     /**
      * Case: creation of already existing at database Offer
      */
-    public Offer(int id, String name, String description, Category category, double price) {
+    public Offer(long id, String name, String description, Category category, double price) {
         this(name, description, category, price);
-        this.id = id;
+        setId(id);
     }
 
     /**
@@ -56,14 +51,6 @@ public class Offer extends BaseEntity{
      */
     public Offer(){
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id){
-        this.id = id;
     }
 
     public String getName() {
@@ -126,7 +113,7 @@ public class Offer extends BaseEntity{
     @Override
     public String toString() {
         return "Offer{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", category=" + category +
