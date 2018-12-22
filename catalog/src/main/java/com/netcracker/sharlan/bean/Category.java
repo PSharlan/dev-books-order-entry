@@ -2,6 +2,7 @@ package com.netcracker.sharlan.bean;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -15,11 +16,6 @@ public class Category extends BaseEntity{
     private Set<Offer> offers = new HashSet<Offer>();
 
     public Category(String name){
-        this.name = name;
-    }
-
-    public Category(long id, String name){
-        setId(id);
         this.name = name;
     }
 
@@ -41,6 +37,19 @@ public class Category extends BaseEntity{
 
     public void setOffers(Set<Offer> offers) {
         this.offers = offers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category)) return false;
+        Category category = (Category) o;
+        return Objects.equals(name, category.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

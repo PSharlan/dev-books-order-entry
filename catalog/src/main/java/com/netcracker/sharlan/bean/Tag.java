@@ -24,11 +24,6 @@ public class Tag extends BaseEntity {
         this.name = name;
     }
 
-    public Tag(long id, String name){
-        setId(id);
-        this.name = name;
-    }
-
     public Tag(){
 
     }

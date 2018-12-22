@@ -1,14 +1,27 @@
 package com.netcracker.sharlan.bean;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Address {
+@Entity
+@Table(name = "address")
+public class Address extends BaseEntity{
 
-    private int id;
+    @Column(name="country", nullable = false)
     private String country;
+
+    @Column(name="city")
     private String city;
+
+    @Column(name="street")
     private String street;
+
+    @Column(name="house_number")
     private int houseNum;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="customer", nullable = false)
+    private Customer customer;
 
     public Address(String country, String city, String street, int houseNum) {
         this.country = country;
@@ -17,9 +30,9 @@ public class Address {
         this.houseNum = houseNum;
     }
 
-    public Address(int id, String country, String city, String street, int houseNum) {
+    public Address(String country, String city, String street, int houseNum, Customer customer) {
         this(country, city, street, houseNum);
-        this.id = id;
+        this.customer = customer;
     }
 
     /**
@@ -27,14 +40,6 @@ public class Address {
      */
     public Address(){
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getCountry() {
@@ -69,19 +74,39 @@ public class Address {
         this.houseNum = houseNum;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Address)) return false;
         Address address = (Address) o;
         return houseNum == address.houseNum &&
                 Objects.equals(country, address.country) &&
                 Objects.equals(city, address.city) &&
-                Objects.equals(street, address.street);
+                Objects.equals(street, address.street) &&
+                Objects.equals(customer, address.customer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(country, city, street, houseNum);
+        return Objects.hash(country, city, street, houseNum, customer);
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id='" + getId() + '\'' +
+                "country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", houseNum=" + houseNum +
+                '}';
     }
 }

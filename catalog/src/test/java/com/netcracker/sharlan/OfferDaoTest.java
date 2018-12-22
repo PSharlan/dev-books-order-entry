@@ -4,24 +4,18 @@ import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
 import com.netcracker.sharlan.bean.Tag;
 import com.netcracker.sharlan.dao.*;
-import com.netcracker.sharlan.hibernate.utils.DatabaseManager;
-import com.netcracker.sharlan.hibernate.utils.PostgreSQLDatabaseManager;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestOfferDao {
+public class OfferDaoTest {
 
     private OfferDao offerDao;
     private TagDao tagDao;
@@ -51,7 +45,7 @@ public class TestOfferDao {
     }
 
     @AfterEach
-    public void end(){
+    public void breakDown(){
 
         offerDao.delete(offer);
         for (Tag tag: tags) {
@@ -62,23 +56,16 @@ public class TestOfferDao {
 
 
     @Test
-    public void testSaveOffer() {
-        offerDao.save(offer);
-
-        assertNotNull(offer.getId());
-    }
-
-    @Test
-    public void testFindOffer() {
+    public void findOffer() {
         offerDao.save(offer);
         Offer foundOffer = offerDao.findById(offer.getId());
 
-        assertNotNull(foundOffer.getId());
+        assertNotNull(foundOffer);
         assertNotNull(foundOffer.getName());
     }
 
     @Test
-    public void testUpdateOffer() {
+    public void updateOffer() {
         offerDao.save(offer);
         offer.setName("updatedName");
         Offer updatedOffer = offerDao.update(offer);
@@ -89,7 +76,7 @@ public class TestOfferDao {
     }
 
     @Test
-    public void testDeleteOffer() {
+    public void deleteOffer() {
         offerDao.save(offer);
         long id = offer.getId();
         offerDao.delete(offer);
@@ -98,7 +85,7 @@ public class TestOfferDao {
     }
 
     @Test
-    public void testFindOffersByTag(){
+    public void findOffersByTag(){
         offer.setTags(tags);
         offer = offerDao.save(offer);
         tags = offer.getTags();
@@ -108,14 +95,14 @@ public class TestOfferDao {
     }
 
     @Test
-    public void testFindOffersByCategory(){
+    public void findOffersByCategory(){
         offer = offerDao.save(offer);
         category = offer.getCategory();
         assertNotNull(offerDao.findByCategory(category));
     }
 
     @Test
-    public void testUpdateOfferCategory(){
+    public void updateOfferCategory(){
         offer = offerDao.save(offer);
         Category newCategory = new Category("NEW_TEST_CATEGORY");
         offer = offerDao.updateCategory(offer, newCategory);

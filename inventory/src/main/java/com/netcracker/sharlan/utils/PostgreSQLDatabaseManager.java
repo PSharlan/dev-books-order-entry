@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.utils;
+package com.netcracker.sharlan.utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -7,7 +7,7 @@ import javax.persistence.Persistence;
 public class PostgreSQLDatabaseManager implements DatabaseManager{
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.
-            createEntityManagerFactory("catalogPersistenceUnit");
+            createEntityManagerFactory("inventoryPersistenceUnit");
 
     private EntityManager entityManager;
 

@@ -28,22 +28,11 @@ public class Offer extends BaseEntity{
     )
     private Set<Tag> tags = new HashSet<Tag>();
 
-    /**
-     * Case: creation of new Offer before insert
-     */
     public Offer(String name, String description, Category category, double price) {
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
-    }
-
-    /**
-     * Case: creation of already existing at database Offer
-     */
-    public Offer(long id, String name, String description, Category category, double price) {
-        this(name, description, category, price);
-        setId(id);
     }
 
     /**
@@ -113,7 +102,7 @@ public class Offer extends BaseEntity{
     @Override
     public String toString() {
         return "Offer{" +
-                "id=" + getId() +
+                "id='" + getId() + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", category=" + category +
