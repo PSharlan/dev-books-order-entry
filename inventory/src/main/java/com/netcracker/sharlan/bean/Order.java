@@ -12,11 +12,11 @@ public class Order extends BaseEntity{
     @Column(name="customer_id", nullable = false)
     private int customerId;
 
-    @Column(name="items_amount")
-    private int itemsAmount;
+    @Column(name= "items_count")
+    private int itemsCount;
 
-    @Column(name="price_amount")
-    private double priceAmount;
+    @Column(name= "price_total")
+    private double priceTotal;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name="payment_status")
@@ -41,7 +41,7 @@ public class Order extends BaseEntity{
     public Order(){}
 
     /**
-     * case: creation of NEW Order without order items.
+     * case: creation of new Order without order items.
      * ItemsAmount: 0, PriceAmount: 0.0
      */
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus) {
@@ -51,30 +51,46 @@ public class Order extends BaseEntity{
     }
 
     /**
-     * case: creation of NEW Order with order items.
+     * case: creation of new Order with order items.
      * ItemsAmount and PriceAmount will be calculated.
      */
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus, List<OrderItem> items) {
         this(customerId, paymentStatus, orderStatus);
-        this.setItems(items);
-        updateItemsInfo();
+        addOrderItems(items);
     }
 
-    public void updateItemsInfo(){
-        int amount = 0;
+    public void addOrderItems(OrderItem item){
+        item.setOrder(this);
+        this.items.add(item);
+        countItems();
+    }
+
+    public void addOrderItems(List<OrderItem> items){
+        for (OrderItem item : items) {
+            addOrderItems(item);
+        }
+    }
+
+    public void removeOrderItems(OrderItem item){
+        this.items.remove(item);
+        countItems();
+    }
+
+    public void removeOrderItems(List<OrderItem> items){
+        for (OrderItem item : items) {
+            removeOrderItems(item);
+        }
+    }
+
+    private void countItems(){
+        int count = 0;
         double price = 0;
         for (OrderItem item : items) {
-            amount++;
+            count++;
             price += item.getPrice();
         }
-        this.itemsAmount = amount;
-        this.priceAmount = price;
-//        this.items = items;
-
-        //before insert items have to know about their order
-        for (OrderItem item : items) {
-            item.setOrder(this);
-        }
+        this.itemsCount = count;
+        this.priceTotal = price;
     }
 
     public int getCustomerId() {
@@ -85,20 +101,20 @@ public class Order extends BaseEntity{
         this.customerId = customerId;
     }
 
-    public int getItemsAmount() {
-        return itemsAmount;
+    public int getItemsCount() {
+        return itemsCount;
     }
 
-    public void setItemsAmount(int itemsAmount) {
-        this.itemsAmount = itemsAmount;
+    public void setItemsCount(int itemsAmount) {
+        this.itemsCount = itemsAmount;
     }
 
-    public double getPriceAmount() {
-        return priceAmount;
+    public double getPriceTotal() {
+        return priceTotal;
     }
 
-    public void setPriceAmount(double priceAmount) {
-        this.priceAmount = priceAmount;
+    public void setPriceTotal(double priceAmount) {
+        this.priceTotal = priceAmount;
     }
 
     public PaymentStatus getPaymentStatus() {
@@ -148,15 +164,15 @@ public class Order extends BaseEntity{
         Order order = (Order) o;
         return getId() == order.getId() &&
                 customerId == order.customerId &&
-                itemsAmount == order.itemsAmount &&
-                Double.compare(order.priceAmount, priceAmount) == 0 &&
+                itemsCount == order.itemsCount &&
+                Double.compare(order.priceTotal, priceTotal) == 0 &&
                 paymentStatus == order.paymentStatus &&
                 orderStatus == order.orderStatus;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), customerId, itemsAmount, priceAmount, paymentStatus, orderStatus, creation, closing);
+        return Objects.hash(getId(), customerId, itemsCount, priceTotal, paymentStatus, orderStatus, creation, closing);
     }
 
     @Override
@@ -164,8 +180,8 @@ public class Order extends BaseEntity{
         return "Order{" +
                 "id=" + getId() +
                 ", customerId=" + customerId +
-                ", itemsAmount=" + itemsAmount +
-                ", priceAmount=" + priceAmount +
+                ", itemsAmount=" + itemsCount +
+                ", priceAmount=" + priceTotal +
                 ", paymentStatus=" + paymentStatus +
                 ", orderStatus=" + orderStatus +
                 ", creationTS=" + creation +

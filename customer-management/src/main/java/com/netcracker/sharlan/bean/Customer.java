@@ -1,42 +1,27 @@
 package com.netcracker.sharlan.bean;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.Objects;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.*;
 
-public class Customer {
+@Entity
+@Table(name = "customer")
+public class Customer extends BaseEntity{
 
-    private int id;
+    @Column(name="name", nullable = false)
     private String name;
+
+    @Column(name="last_name", nullable = false)
     private String lastName;
+
+    @Column(name="email", nullable = false, unique = true)
     private String email;
-    private Address address;
 
-    /**
-     * Creation of new Customer before insert
-     * Case: user did not indicated address
-     */
-    public Customer(String name, String lastName, String email) {
-        this.name = name;
-        this.lastName = lastName;
-        this.email = email;
-    }
+    @Column(name="date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 
-    /**
-     * Case: creation of new Customer before insert
-     */
-    public Customer(String name, String lastName, String email, Address address) {
-        this(name, lastName, email);
-        this.address = address;
-    }
-
-    /**
-     * Case: creation of already existing at database Customer
-     */
-    public Customer(int id, String name, String lastName, String email, Address address) {
-        this(name, lastName, email, address);
-        this.id = id;
-    }
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customer")
+    private Set<Address> addresses = new HashSet<>();
 
     /**
      * case: for frameworks
@@ -45,12 +30,33 @@ public class Customer {
 
     }
 
-    public int getId() {
-        return id;
+
+    public Customer(String name, String lastName, String email, LocalDate dateOfBirth) {
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void addAddress(Address address){
+        address.setCustomer(this);
+        addresses.add(address);
+    }
+
+    public void addAddress(Set<Address> addresses){
+        for (Address a : addresses) {
+            addAddress(a);
+        }
+    }
+
+    public void removeAddress(Address address){
+        addresses.remove(address);
+    }
+
+    public void removeAddress(Set<Address> addresses){
+        for (Address a : addresses) {
+            removeAddress(a);
+        }
     }
 
     public String getName() {
@@ -77,27 +83,46 @@ public class Customer {
         this.email = email;
     }
 
-    public Address getAddress() {
-        return address;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Set<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<Address> addresses) {
+        this.addresses = addresses;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
         return Objects.equals(name, customer.name) &&
                 Objects.equals(lastName, customer.lastName) &&
                 Objects.equals(email, customer.email) &&
-                Objects.equals(address, customer.address);
+                Objects.equals(dateOfBirth, customer.dateOfBirth);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, lastName, email, address);
+        return Objects.hash(name, lastName, email, dateOfBirth);
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id='" + getId() + '\'' +
+                "name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
     }
 }

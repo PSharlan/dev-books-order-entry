@@ -1,4 +1,6 @@
 package com.netcracker.sharlan.dao;
+
+
 import com.netcracker.sharlan.utils.DatabaseManager;
 import com.netcracker.sharlan.utils.PostgreSQLDatabaseManager;
 

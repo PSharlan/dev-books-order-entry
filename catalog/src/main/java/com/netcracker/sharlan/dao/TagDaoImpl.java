@@ -7,7 +7,7 @@ import java.util.Set;
 public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
 
     public TagDaoImpl(){
-        setPersistentClass(Tag.class);
+        super(Tag.class);
     }
     @Override
     public Tag findById(long id) {

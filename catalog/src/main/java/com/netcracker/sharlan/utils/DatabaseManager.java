@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.hibernate.utils;
+package com.netcracker.sharlan.utils;
 
 import javax.persistence.EntityManager;
 

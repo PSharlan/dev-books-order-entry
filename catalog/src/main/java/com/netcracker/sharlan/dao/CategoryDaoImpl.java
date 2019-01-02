@@ -8,7 +8,7 @@ public class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDa
 
 
     public CategoryDaoImpl(){
-        setPersistentClass(Category.class);
+        super(Category.class);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Set;
 public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
 
     public OrderDaoImpl(){
-        setPersistentClass(Order.class);
+        super(Order.class);
     }
 
     @Override

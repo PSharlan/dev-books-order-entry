@@ -4,13 +4,16 @@ import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Offer;
 import com.netcracker.sharlan.bean.Tag;
 
+import javax.persistence.EntityTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
 public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
 
+    EntityTransaction transaction;
+
     public OfferDaoImpl(){
-        setPersistentClass(Offer.class);
+        super(Offer.class);
     }
 
     @Override
@@ -41,25 +44,28 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
 
     @Override
     public Set<Offer> findByTag(Tag tag) {
-        getEntityManager().getTransaction().begin();
+        transaction = getEntityManager().getTransaction();
+        transaction.begin();
         HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("select o from Offer o join o.tags t where t.id = " + tag.getId()).getResultList());
-        getEntityManager().getTransaction().commit();
+        transaction.commit();
         return set;
     }
 
     @Override
     public Set<Offer> findByCategory(Category category) {
-        getEntityManager().getTransaction().begin();
+        transaction = getEntityManager().getTransaction();
+        transaction.begin();
         HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.category = " + category.getId()).getResultList());
-        getEntityManager().getTransaction().commit();
+        transaction.commit();
         return set;
     }
 
     @Override
     public Set<Offer> findByPrice(double price) {
-        getEntityManager().getTransaction().begin();
+        transaction = getEntityManager().getTransaction();
+        transaction.begin();
         HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.price = " + price).getResultList());
-        getEntityManager().getTransaction().commit();
+        transaction.commit();
         return set;
     }
 

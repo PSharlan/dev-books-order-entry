@@ -1,6 +1,5 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.bean.Category;
 import com.netcracker.sharlan.bean.Tag;
 
 import java.util.Set;

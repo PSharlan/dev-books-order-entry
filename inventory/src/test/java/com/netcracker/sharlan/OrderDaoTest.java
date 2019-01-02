@@ -5,14 +5,11 @@ import com.netcracker.sharlan.bean.OrderItem;
 import com.netcracker.sharlan.bean.OrderStatus;
 import com.netcracker.sharlan.bean.PaymentStatus;
 import com.netcracker.sharlan.dao.*;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +18,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestOrderDao {
+public class OrderDaoTest {
 
     private OrderDao orderDao;
 
@@ -42,27 +39,18 @@ public class TestOrderDao {
     }
 
     @AfterEach
-    public void end(){
+    public void breakDown(){
         orderDao.delete(order);
     }
 
-
     @Test
-    public void testSaveOrder() {
-        Order savedOrder = orderDao.save(order);
-
-        assertNotNull(savedOrder.getId());
-        assertNotNull(savedOrder.getItems());
-    }
-
-    @Test
-    public void testFindAllOrders() {
+    public void findAllOrders() {
         Order savedOrder1 = orderDao.save(order);
         Order savedOrder2 = orderDao.save(order);
         Order savedOrder3 = orderDao.save(order);
         Set<Order> foundOrders = orderDao.findAllOrders();
 
-        assertNotNull(foundOrders.size());
+        assertNotNull(foundOrders);
 
         orderDao.delete(savedOrder1);
         orderDao.delete(savedOrder2);
@@ -70,7 +58,7 @@ public class TestOrderDao {
     }
 
     @Test
-    public void testFindOrderById() {
+    public void findOrderById() {
         Order savedOrder = orderDao.save(order);
         Order foundOrder = orderDao.findById(savedOrder.getId());
 
@@ -78,7 +66,7 @@ public class TestOrderDao {
     }
 
     @Test
-    public void testUpdateOrder() {
+    public void updateOrder() {
         Order savedOrder = orderDao.save(order);
         int savedCustomerId = savedOrder.getCustomerId();
 
@@ -92,10 +80,10 @@ public class TestOrderDao {
     }
 
     @Test
-    public void testUpdateOrderItems() {
+    public void updateOrderItems() {
         Order savedOrder = orderDao.save(order);
-        int savedItemsAmount = savedOrder.getItemsAmount();
-        double savedPriceAmount = savedOrder.getPriceAmount();
+        int savedItemsAmount = savedOrder.getItemsCount();
+        double savedPriceAmount = savedOrder.getPriceTotal();
 
         int i = 0;
         for (OrderItem item : items) {
@@ -106,18 +94,17 @@ public class TestOrderDao {
         }
         items.add(new OrderItem(1, "new item for updated", "some description", "category5", 0.5));
 
-        savedOrder.setItems(items);
-        savedOrder.updateItemsInfo();
+        savedOrder.addOrderItems(items);
 
         Order updatedOrder = orderDao.update(savedOrder);
 
         assertNotNull(updatedOrder.getItems());
-        assertNotEquals(savedItemsAmount, updatedOrder.getItemsAmount());
-        assertNotEquals(savedPriceAmount, updatedOrder.getPriceAmount());
+        assertNotEquals(savedItemsAmount, updatedOrder.getItemsCount());
+        assertNotEquals(savedPriceAmount, updatedOrder.getPriceTotal());
     }
 
     @Test
-    public void testDeleteOrderById() {
+    public void deleteOrderById() {
         Order savedOrder = orderDao.save(order);
 
         long id = savedOrder.getId();

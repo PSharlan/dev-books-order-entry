@@ -118,7 +118,6 @@ public class OrderItem extends BaseEntity{
     public String toString() {
         return "OrderItem{" +
                 "id=" + getId() +
-                ", orderId=" + order.getId() +
                 ", offerId=" + offerId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
