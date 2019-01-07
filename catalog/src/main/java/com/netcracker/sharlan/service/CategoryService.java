@@ -1,10 +1,10 @@
-package com.netcracker.sharlan.dao;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Category;
 
 import java.util.Set;
 
-public interface CategoryDao {
+public interface CategoryService {
 
     Category findById(long id);
 
@@ -15,4 +15,5 @@ public interface CategoryDao {
     Category update(Category category);
 
     void delete(Category category);
+
 }

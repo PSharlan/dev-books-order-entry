@@ -1,7 +1,9 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name="offer")
@@ -102,7 +104,6 @@ public class Offer extends BaseEntity{
     @Override
     public String toString() {
         return "Offer{" +
-                "id='" + getId() + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", category=" + category +

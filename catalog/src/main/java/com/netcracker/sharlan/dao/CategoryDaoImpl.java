@@ -1,9 +1,11 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.bean.Category;
+import com.netcracker.sharlan.entities.Category;
+import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
+@Repository
 public class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDao {
 
 
