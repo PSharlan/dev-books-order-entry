@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.dao;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
@@ -6,7 +6,7 @@ import com.netcracker.sharlan.entities.Tag;
 
 import java.util.Set;
 
-public interface OfferDao {
+public interface OfferService {
 
     Offer findById(long id);
 

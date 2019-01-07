@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -6,25 +6,20 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "tag")
-public class Tag extends BaseEntity {
+@Table(name="category")
+public class Category extends BaseEntity{
 
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "tag_offer",
-            joinColumns = { @JoinColumn(name = "tag_id") },
-            inverseJoinColumns = { @JoinColumn(name = "offer_id") }
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private Set<Offer> offers = new HashSet<Offer>();
 
-    public Tag(String name){
+    public Category(String name){
         this.name = name;
     }
 
-    public Tag(){
+    public Category(){
 
     }
 
@@ -45,20 +40,20 @@ public class Tag extends BaseEntity {
     }
 
     @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return Objects.equals(name, tag.name);
+        if (!(o instanceof Category)) return false;
+        Category category = (Category) o;
+        return Objects.equals(name, category.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

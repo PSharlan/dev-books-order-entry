@@ -1,10 +1,10 @@
-package com.netcracker.sharlan.dao;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Tag;
 
 import java.util.Set;
 
-public interface TagDao {
+public interface TagService {
 
     Tag findById(long id);
 

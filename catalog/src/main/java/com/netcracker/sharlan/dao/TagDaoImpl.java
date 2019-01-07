@@ -1,9 +1,11 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.bean.Tag;
+import com.netcracker.sharlan.entities.Tag;
+import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
+@Repository
 public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
 
     public TagDaoImpl(){
