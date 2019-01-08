@@ -12,8 +12,12 @@ import java.util.Set;
 @Transactional
 public class CategoryServiceImpl implements CategoryService {
 
+    private CategoryDao dao;
+
     @Autowired
-    CategoryDao dao;
+    public CategoryServiceImpl(CategoryDao dao){
+        this.dao = dao;
+    }
 
     @Override
     public Category findById(long id) {

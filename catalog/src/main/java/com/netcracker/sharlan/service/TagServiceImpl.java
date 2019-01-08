@@ -12,8 +12,12 @@ import java.util.Set;
 @Transactional
 public class TagServiceImpl implements TagService {
 
+    private TagDao dao;
+
     @Autowired
-    TagDao dao;
+    public TagServiceImpl(TagDao dao){
+        this.dao = dao;
+    }
 
     @Override
     public Tag findById(long id) {
