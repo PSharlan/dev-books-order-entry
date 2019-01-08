@@ -1,7 +1,6 @@
 package com.netcracker.sharlan;
 
 import com.netcracker.sharlan.config.AppConfig;
-import com.netcracker.sharlan.config.EntityConfig;
 import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
@@ -25,7 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { AppConfig.class, EntityConfig.class}, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
 public class ServiceTest {
 
     @Autowired
@@ -34,31 +33,25 @@ public class ServiceTest {
     private TagService tagService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
+
     private Offer offer;
-    @Autowired
     private Category category;
-    @Autowired
     private Tag tag1;
-    @Autowired
     private Tag tag2;
     private Set<Tag> tags;
 
     @BeforeEach
     public void setUp() {
-        tag1.setName("TEST_TAG1");
-        tag2.setName("TEST_TAG2");
+        category = new Category("TEST_CATEGORY");
+
+        tag1 = new Tag("TEST_TAG1");
+        tag2 = new Tag("TEST_TAG2");
 
         tags = new HashSet<Tag>();
         tags.add(tag1);
         tags.add(tag2);
 
-        category.setName("TEST_CATEGORY");
-
-        offer.setName("TEST_OFFER");
-        offer.setDescription("testOfferDescription");
-        offer.setCategory(category);
-        offer.setPrice(222.22);
+        offer = new Offer("TEST_OFFER", "testOfferDescription", category, 222.22);
         offer.setTags(tags);
     }
 

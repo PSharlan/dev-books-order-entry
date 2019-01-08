@@ -14,8 +14,12 @@ import java.util.Set;
 @Transactional
 public class OfferServiceImpl implements OfferService {
 
+    private OfferDao dao;
+
     @Autowired
-    OfferDao dao;
+    public OfferServiceImpl(OfferDao dao){
+        this.dao = dao;
+    }
 
     @Override
     public Offer findById(long id) {
