@@ -4,8 +4,8 @@ import com.netcracker.sharlan.dao.CategoryDao;
 import com.netcracker.sharlan.entities.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Set;
 
 @Service
