@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -118,7 +118,6 @@ public class Customer extends BaseEntity{
     @Override
     public String toString() {
         return "Customer{" +
-                "id='" + getId() + '\'' +
                 "name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
