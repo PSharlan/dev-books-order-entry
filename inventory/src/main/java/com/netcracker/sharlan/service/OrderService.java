@@ -1,10 +1,10 @@
-package com.netcracker.sharlan.dao;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Order;
 
 import java.util.Set;
 
-public interface OrderDao {
+public interface OrderService {
 
     Order save(Order order);
 
@@ -17,5 +17,4 @@ public interface OrderDao {
     void delete(Order order);
 
     void delete(long id);
-
 }

@@ -1,10 +1,12 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.bean.Order;
+import com.netcracker.sharlan.entities.Order;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Repository
 public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
 
     public OrderDaoImpl(){

@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 public enum OrderStatus {
     NEW(0), PENDING(1), DELIVERY(2), CLOSED(3), CANCELED(10);
