@@ -1,10 +1,10 @@
-package com.netcracker.sharlan.dao;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Customer;
 
 import java.util.Set;
 
-public interface CustomerDao {
+public interface CustomerService {
 
     Customer findById(long id);
 
@@ -21,5 +21,4 @@ public interface CustomerDao {
     void delete(Customer customer);
 
     void delete(long id);
-
 }
