@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -117,7 +117,6 @@ public class OrderItem extends BaseEntity{
     @Override
     public String toString() {
         return "OrderItem{" +
-                "id=" + getId() +
                 ", offerId=" + offerId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

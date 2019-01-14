@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -178,7 +178,6 @@ public class Order extends BaseEntity{
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + getId() +
                 ", customerId=" + customerId +
                 ", itemsAmount=" + itemsCount +
                 ", priceAmount=" + priceTotal +

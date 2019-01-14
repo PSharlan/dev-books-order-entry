@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 public enum PaymentStatus {
     NONE(0), BILLED(1), PAID(2), CANCELED(10);
