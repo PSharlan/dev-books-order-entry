@@ -1,12 +1,13 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.bean.Customer;
+import com.netcracker.sharlan.entities.Customer;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Repository
 public class CustomerDaoImpl extends AbstractDao<Customer> implements CustomerDao{
 
     private EntityTransaction transaction;
@@ -27,19 +28,13 @@ public class CustomerDaoImpl extends AbstractDao<Customer> implements CustomerDa
 
     @Override
     public Set<Customer> findByName(String name) {
-        transaction = getEntityManager().getTransaction();
-        transaction.begin();
         HashSet<Customer> set = new HashSet<Customer>(getEntityManager().createQuery("select c from Customer c where c.name = " + name).getResultList());
-        transaction.commit();
         return set;
     }
 
     @Override
     public Set<Customer> findByLastName(String lastName) {
-        transaction = getEntityManager().getTransaction();
-        transaction.begin();
         HashSet<Customer> set = new HashSet<Customer>(getEntityManager().createQuery("select c from Customer c where c.lastName = " + lastName).getResultList());
-        transaction.commit();
         return set;
     }
 

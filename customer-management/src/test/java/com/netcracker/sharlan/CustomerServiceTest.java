@@ -1,26 +1,31 @@
 package com.netcracker.sharlan;
 
+import com.netcracker.sharlan.config.AppConfig;
+import com.netcracker.sharlan.service.CustomerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.netcracker.sharlan.bean.Address;
-import com.netcracker.sharlan.bean.Customer;
-import com.netcracker.sharlan.dao.CustomerDao;
-import com.netcracker.sharlan.dao.CustomerDaoImpl;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.netcracker.sharlan.entities.Address;
+import com.netcracker.sharlan.entities.Customer;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CustomerDaoTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    private CustomerDao customerDao;
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
+public class CustomerServiceTest {
+
+    @Autowired
+    private CustomerService customerService;
     private Customer customer;
     private Address singleAddress;
     private Set<Address> addresses;
@@ -38,13 +43,11 @@ public class CustomerDaoTest {
         customer = new Customer("Customer Name","Customer Last Name",
                 "email@gmail.com", LocalDate.of(1990, 5, 20 ));
 
-        customerDao = new CustomerDaoImpl();
-
     }
 
     @AfterEach
     public void breakDown(){
-        customerDao.delete(customer);
+        customerService.delete(customer);
     }
 
     @Test
@@ -53,49 +56,50 @@ public class CustomerDaoTest {
         Customer c2 = new Customer("Name2", "LastName2", "email2", LocalDate.of(1990, 5, 20 ));
         Customer c3 = new Customer("Name3", "LastName3", "email3", LocalDate.of(1990, 5, 20 ));
 
-        customerDao.save(c1);
-        customerDao.save(c2);
-        customerDao.save(c3);
+        customerService.save(c1);
+        customerService.save(c2);
+        customerService.save(c3);
 
-        Set<Customer> foundCustomers = customerDao.findAllCustomers();
+        Set<Customer> foundCustomers = customerService.findAllCustomers();
 
         assertNotNull(foundCustomers);
 
-        customerDao.delete(c1);
-        customerDao.delete(c2);
-        customerDao.delete(c3);
+        customerService.delete(c1);
+        customerService.delete(c2);
+        customerService.delete(c3);
     }
 
     @Test
     public void findCustomerById() {
-        Customer savedCustomer = customerDao.save(customer);
-        Customer foundCustomer = customerDao.findById(savedCustomer.getId());
+        Customer savedCustomer = customerService.save(customer);
+        Customer foundCustomer = customerService.findById(savedCustomer.getId());
 
         assertEquals(savedCustomer, foundCustomer);
     }
 
     @Test
     public void updateCustomer() {
-        Customer savedCustomer = customerDao.save(customer);
+        Customer savedCustomer = customerService.save(customer);
         Set<Address> savedCustomerAddress = savedCustomer.getAddresses();
         int size = savedCustomerAddress.size();
         savedCustomer.addAddress(singleAddress);
 
-        Customer updatedCustomer = customerDao.update(savedCustomer);
+        Customer updatedCustomer = customerService.update(savedCustomer);
         Set<Address> updatedCustomerAddress = updatedCustomer.getAddresses();
 
         assertNotNull(updatedCustomer);
         assertNotEquals(size, updatedCustomerAddress.size());
         assertEquals(savedCustomer.getId(), updatedCustomer.getId());
+        customerService.delete(updatedCustomer);
     }
 
     @Test
     public void deleteCustomerById() {
-        Customer savedCustomer = customerDao.save(customer);
+        Customer savedCustomer = customerService.save(customer);
 
         long id = savedCustomer.getId();
-        customerDao.delete(id);
-        Customer deletedCustomer = customerDao.findById(id);
+        customerService.delete(id);
+        Customer deletedCustomer = customerService.findById(id);
 
         assertNull(deletedCustomer);
     }

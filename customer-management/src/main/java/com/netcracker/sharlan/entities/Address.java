@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.bean;
+package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -102,7 +102,6 @@ public class Address extends BaseEntity{
     @Override
     public String toString() {
         return "Address{" +
-                "id='" + getId() + '\'' +
                 "country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", street='" + street + '\'' +
