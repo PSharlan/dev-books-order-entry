@@ -9,6 +9,7 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+
 @Configuration
 @EnableTransactionManagement
 @ComponentScans(value = {@ComponentScan("com.netcracker.sharlan")})

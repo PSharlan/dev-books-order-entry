@@ -18,7 +18,7 @@
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <property name="javax.persistence.jdbc.password" value="1111"/>
             <property name="hibernate.format_sql" value="true"/>
-
+            <property name="hibernate.jdbc.lob.non_contextual_creation" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
