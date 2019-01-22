@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,14 +17,14 @@ public class Offer extends BaseEntity{
     @Column(name="description", nullable = false)
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name="category", nullable = false)
     private Category category;
 
     @Column(name="price", nullable = false)
     private double price;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tag_offer",
             joinColumns = { @JoinColumn(name = "offer_id") },

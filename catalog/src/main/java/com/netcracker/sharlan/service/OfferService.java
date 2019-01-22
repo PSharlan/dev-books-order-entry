@@ -4,9 +4,12 @@ import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
 
+import java.util.List;
 import java.util.Set;
 
 public interface OfferService {
+
+    Set<Offer> findAll();
 
     Offer findById(long id);
 

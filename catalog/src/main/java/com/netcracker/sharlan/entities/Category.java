@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -12,7 +14,8 @@ public class Category extends BaseEntity{
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
+    @JsonIgnore
     private Set<Offer> offers = new HashSet<Offer>();
 
     public Category(String name){

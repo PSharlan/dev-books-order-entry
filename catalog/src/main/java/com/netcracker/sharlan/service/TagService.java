@@ -2,6 +2,7 @@ package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Tag;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TagService {
@@ -15,4 +16,8 @@ public interface TagService {
     Tag update(Tag tag);
 
     void delete(Tag tag);
+
+    void delete(long id);
+
+    List<Tag> findAll();
 }

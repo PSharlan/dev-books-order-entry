@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -20,6 +21,11 @@ public class OfferServiceImpl implements OfferService {
     @Autowired
     public OfferServiceImpl(OfferDao dao){
         this.dao = dao;
+    }
+
+    @Override
+    public Set<Offer> findAll() {
+        return dao.findAll();
     }
 
     @Override

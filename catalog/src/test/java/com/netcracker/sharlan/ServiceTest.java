@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,13 +45,14 @@ public class ServiceTest {
     @BeforeEach
     public void setUp() {
         category = new Category("TEST_CATEGORY");
-
+        categoryService.save(category);
         tag1 = new Tag("TEST_TAG1");
         tag2 = new Tag("TEST_TAG2");
 
         tags = new HashSet<Tag>();
         tags.add(tag1);
         tags.add(tag2);
+        tagService.saveAll(tags);
 
         offer = new Offer("TEST_OFFER", "testOfferDescription", category, 222.22);
         offer.setTags(tags);
@@ -64,6 +66,13 @@ public class ServiceTest {
             tagService.delete(tag);
         }
         categoryService.delete(category);
+    }
+
+
+    @Test
+    public void findAllOffers(){
+        Set<Offer> list = offerService.findAll();
+        assertNotNull(list);
     }
 
 
@@ -116,7 +125,10 @@ public class ServiceTest {
     @Test
     public void updateOfferCategory(){
         offer = offerService.save(offer);
+
         Category newCategory = new Category("NEW_TEST_CATEGORY");
+        categoryService.save(newCategory);
+
         offer = offerService.updateCategory(offer, newCategory);
 
         assertEquals(offer.getCategory().getName(), "NEW_TEST_CATEGORY");
@@ -125,6 +137,4 @@ public class ServiceTest {
         offerService.updateCategory(offer, category);
         categoryService.delete(newCategory);
     }
-
-
 }

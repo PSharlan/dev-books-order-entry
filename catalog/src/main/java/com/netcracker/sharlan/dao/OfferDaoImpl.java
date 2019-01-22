@@ -6,6 +6,7 @@ import com.netcracker.sharlan.entities.Tag;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -13,6 +14,11 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
 
     public OfferDaoImpl(){
         super(Offer.class);
+    }
+
+    @Override
+    public Set<Offer> findAll() {
+        return new HashSet<>(getAll());
     }
 
     @Override

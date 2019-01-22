@@ -3,6 +3,7 @@ package com.netcracker.sharlan.dao;
 import com.netcracker.sharlan.entities.Tag;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -36,6 +37,16 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
     @Override
     public void delete(Tag tag) {
         remove(tag);
+    }
+
+    @Override
+    public void delete(long id) {
+        remove(findById(id));
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return getAll();
     }
 
 }

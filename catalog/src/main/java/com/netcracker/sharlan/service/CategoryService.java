@@ -2,6 +2,7 @@ package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Category;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CategoryService {
@@ -16,4 +17,7 @@ public interface CategoryService {
 
     void delete(Category category);
 
+    List<Category> findAll();
+
+    void delete(long id);
 }

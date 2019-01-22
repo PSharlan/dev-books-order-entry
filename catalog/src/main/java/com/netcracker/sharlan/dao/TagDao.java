@@ -2,6 +2,7 @@ package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.entities.Tag;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TagDao {
@@ -15,4 +16,8 @@ public interface TagDao {
     Tag update(Tag tag);
 
     void delete(Tag tag);
+
+    void delete(long id);
+
+    List<Tag> findAll();
 }
