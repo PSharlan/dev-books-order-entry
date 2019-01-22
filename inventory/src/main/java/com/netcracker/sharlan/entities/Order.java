@@ -32,7 +32,7 @@ public class Order extends BaseEntity{
     @Column(name="closing_time")
     private Timestamp closing;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
 
     /**

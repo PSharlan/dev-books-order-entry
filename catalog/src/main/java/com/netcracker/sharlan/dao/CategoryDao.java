@@ -2,6 +2,7 @@ package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.entities.Category;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CategoryDao {
@@ -15,4 +16,8 @@ public interface CategoryDao {
     Category update(Category category);
 
     void delete(Category category);
+
+    List<Category> findAll();
+
+    void delete(long id);
 }

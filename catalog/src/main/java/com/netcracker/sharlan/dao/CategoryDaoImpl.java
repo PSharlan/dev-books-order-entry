@@ -3,6 +3,7 @@ package com.netcracker.sharlan.dao;
 import com.netcracker.sharlan.entities.Category;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -38,6 +39,16 @@ public class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDa
     @Override
     public void delete(Category category) {
         remove(category);
+    }
+
+    @Override
+    public List<Category> findAll() {
+        return getAll();
+    }
+
+    @Override
+    public void delete(long id) {
+        remove(findById(id));
     }
 
 }

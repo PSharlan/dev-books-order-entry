@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -42,5 +43,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void delete(Category category) {
         dao.delete(category);
+    }
+
+    @Override
+    public List<Category> findAll() {
+        return dao.findAll();
+    }
+
+    @Override
+    public void delete(long id) {
+        dao.delete(id);
     }
 }

@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -9,6 +11,7 @@ public class OrderItem extends BaseEntity{
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id", nullable = false)
+    @JsonIgnore
     private Order order;
 
     @Column(name="offer_id")

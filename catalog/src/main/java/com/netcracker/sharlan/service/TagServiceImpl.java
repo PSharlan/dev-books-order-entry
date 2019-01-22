@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -43,5 +44,15 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(Tag tag) {
         dao.delete(tag);
+    }
+
+    @Override
+    public void delete(long id) {
+        dao.delete(id);
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return dao.findAll();
     }
 }
