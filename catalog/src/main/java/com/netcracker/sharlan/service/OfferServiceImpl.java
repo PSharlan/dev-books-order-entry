@@ -32,7 +32,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offer findById(long id) {
-        return offerDao.findById(id);
+        Offer offer = offerDao.findById(id);
+        offer.getTags().size();
+        return offer;
     }
 
     @Override
@@ -81,13 +83,14 @@ public class OfferServiceImpl implements OfferService {
         Set<Offer> filteredOffers = new HashSet<>();
         for (Offer offer: allOffers) {
             if(categoryId == 0 || offer.getCategory().getId() == categoryId){
-                if(tagForFilter == null || offer.getTags().contains(tagForFilter)){
-                    if(minPrice == 0 || offer.getPrice() > minPrice){
-                        if(maxPrice == 0 || offer.getPrice() < maxPrice){
+                if(minPrice == 0 || offer.getPrice() > minPrice){
+                    if(maxPrice == 0 || offer.getPrice() < maxPrice){
+                        if(tagForFilter == null || offer.getTags().contains(tagForFilter)) {
                             filteredOffers.add(offer);
                         }
                     }
                 }
+
             }
         }
         return filteredOffers;

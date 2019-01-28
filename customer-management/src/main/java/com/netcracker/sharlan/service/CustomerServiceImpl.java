@@ -22,7 +22,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findById(long id) {
-        return dao.findById(id);
+        Customer customer = dao.findById(id);
+        customer.getAddresses().size();
+        return customer;
     }
 
     @Override

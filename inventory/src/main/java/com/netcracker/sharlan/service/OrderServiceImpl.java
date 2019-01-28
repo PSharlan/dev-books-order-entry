@@ -36,7 +36,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(long id) {
-        return orderDao.findById(id).orElse(null);
+        Order order = orderDao.findById(id).orElse(null);
+        if(order != null){
+            order.getItems().size();
+        }
+        return order;
     }
 
     @Override

@@ -23,7 +23,9 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag findById(long id) {
-        return dao.findById(id);
+        Tag tag = dao.findById(id);
+        tag.getOffers().size();
+        return tag;
     }
 
     @Override

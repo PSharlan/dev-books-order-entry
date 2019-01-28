@@ -1,4 +1,6 @@
 package com.netcracker.sharlan.entities;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ public class Order extends BaseEntity{
     @Column(name="closing_time")
     private Timestamp closing;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
 
     /**

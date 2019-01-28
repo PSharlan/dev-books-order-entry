@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -9,9 +9,9 @@ import java.util.Objects;
 @Table(name="order_item")
 public class OrderItem extends BaseEntity{
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="order_id", nullable = false)
-    @JsonIgnore
     private Order order;
 
     @Column(name="offer_id")

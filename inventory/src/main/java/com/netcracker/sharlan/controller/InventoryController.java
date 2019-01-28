@@ -41,11 +41,11 @@ public class InventoryController {
     }
 
     @ApiOperation(value = "Return list of an orders by customer id")
-    @RequestMapping(value = "/orders", params = "customerId", method = RequestMethod.GET)
+    @RequestMapping(value = "customers/{customerId}/orders", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Order> getAllOrdersByCustomerId(
             @ApiParam(value = "Customer id", required = true)
-            @RequestParam long customerId) {
+            @PathVariable long customerId) {
         return orderService.findByCustomerId(customerId);
     }
 
@@ -62,13 +62,13 @@ public class InventoryController {
             value = "Return customer orders by category",
             notes = "Required customer id and category name"
     )
-    @RequestMapping(value = "/orders", params = {"customerId", "category"}, method = RequestMethod.GET)
+    @RequestMapping(value = "customers/{customerId}/orders/categories/{category}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Order> getOrdersByCategory(
             @ApiParam(value = "Id of a customer to lookup for", required = true)
-            @RequestParam long customerId,
+            @PathVariable long customerId,
             @ApiParam(value = "Category name", required = true)
-            @RequestParam String category) {
+            @PathVariable String category) {
         return orderService.findCustomerOrdersByCategory(customerId, category);
     }
 

@@ -22,7 +22,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(long id) {
-        return dao.findById(id);
+        Category category = dao.findById(id);
+        category.getOffers().size();
+        return category;
     }
 
     @Override
