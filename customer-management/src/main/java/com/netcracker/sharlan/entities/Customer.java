@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -20,7 +22,7 @@ public class Customer extends BaseEntity{
     @Column(name="date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customer")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "customer")
     private Set<Address> addresses = new HashSet<>();
 
     /**

@@ -17,16 +17,16 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertNotEquals;
+//import static org.junit.jupiter.api.Assertions.assertNotNull;
+//import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
-
 public class OrderServiceTest {
 
     @Autowired
@@ -62,7 +62,7 @@ public class OrderServiceTest {
     public void findAllOrders() {
         Order savedOrder1 = orderService.save(order1);
         Order savedOrder2 = orderService.save(order2);
-        Set<Order> foundOrders = orderService.findAllOrders();
+        List<Order> foundOrders = orderService.findAll();
 
         assertNotNull(foundOrders);
 
@@ -81,11 +81,11 @@ public class OrderServiceTest {
     @Test
     public void updateOrder() {
         Order savedOrder = orderService.save(order1);
-        int savedCustomerId = savedOrder.getCustomerId();
+        long savedCustomerId = savedOrder.getCustomerId();
 
         savedOrder.setCustomerId(10);
-        Order updatedOrder = orderService.update(savedOrder);
-        int updatedCustomerId = updatedOrder.getCustomerId();
+        Order updatedOrder = orderService.save(savedOrder);
+        long updatedCustomerId = updatedOrder.getCustomerId();
 
         assertNotNull(updatedOrder);
         assertEquals(savedOrder.getId(), updatedOrder.getId());
@@ -109,7 +109,7 @@ public class OrderServiceTest {
 
         savedOrder.addOrderItems(items1);
 
-        Order updatedOrder = orderService.update(savedOrder);
+        Order updatedOrder = orderService.save(savedOrder);
 
         assertNotNull(updatedOrder.getItems());
         assertNotEquals(savedItemsAmount, updatedOrder.getItemsCount());

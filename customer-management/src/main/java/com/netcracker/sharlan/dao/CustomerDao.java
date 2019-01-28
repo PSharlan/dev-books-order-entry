@@ -8,7 +8,7 @@ public interface CustomerDao {
 
     Customer findById(long id);
 
-    Set<Customer> findAllCustomers();
+    Set<Customer> findAll();
 
     Set<Customer> findByName(String name);
 

@@ -1,6 +1,7 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.CustomerDao;
+import com.netcracker.sharlan.entities.Address;
 import com.netcracker.sharlan.entities.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Set<Customer> findAllCustomers() {
-        return dao.findAllCustomers();
+    public Set<Customer> findAll() {
+        return dao.findAll();
     }
 
     @Override
@@ -41,6 +42,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer save(Customer customer) {
+        for (Address address: customer.getAddresses()) {
+            address.setCustomer(customer);
+        }
         return dao.save(customer);
     }
 

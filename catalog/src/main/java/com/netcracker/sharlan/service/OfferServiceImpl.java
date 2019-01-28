@@ -9,82 +9,107 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
 @Transactional
 public class OfferServiceImpl implements OfferService {
 
-    private OfferDao dao;
+    private OfferDao offerDao;
+    private TagService tagService;
 
     @Autowired
-    public OfferServiceImpl(OfferDao dao){
-        this.dao = dao;
+    public OfferServiceImpl(OfferDao offerDao, TagService tagService){
+        this.offerDao = offerDao;
+        this.tagService = tagService;
     }
 
     @Override
     public Set<Offer> findAll() {
-        return dao.findAll();
+        return offerDao.findAll();
     }
 
     @Override
     public Offer findById(long id) {
-        return dao.findById(id);
+        return offerDao.findById(id);
     }
 
     @Override
     public Offer save(Offer offer) {
-        return dao.save(offer);
+        return offerDao.save(offer);
     }
 
     @Override
     public Offer update(Offer offer) {
-        return dao.update(offer);
+        return offerDao.update(offer);
     }
 
     @Override
     public void delete(Offer offer) {
-        dao.delete(offer);
+        offerDao.delete(offer);
     }
 
     @Override
     public void delete(long id) {
-        dao.delete(id);
+        offerDao.delete(id);
     }
 
     @Override
     public Set<Offer> findByTag(Tag tag) {
-        return dao.findByTag(tag);
+        return offerDao.findByTag(tag);
     }
 
     @Override
     public Set<Offer> findByCategory(Category category) {
-        return dao.findByCategory(category);
+        return offerDao.findByCategory(category);
     }
 
     @Override
     public Set<Offer> findByPrice(double price) {
-        return dao.findByPrice(price);
+        return offerDao.findByPrice(price);
+    }
+
+    @Override
+    public Set<Offer> findByParams(long categoryId, long tagId, double minPrice, double maxPrice) {
+        Tag tagForFilter = null;
+        if(tagId != 0){
+            tagForFilter = tagService.findById(tagId);
+        }
+
+        Set<Offer> allOffers = offerDao.findAll();
+        Set<Offer> filteredOffers = new HashSet<>();
+        for (Offer offer: allOffers) {
+            if(categoryId == 0 || offer.getCategory().getId() == categoryId){
+                if(tagForFilter == null || offer.getTags().contains(tagForFilter)){
+                    if(minPrice == 0 || offer.getPrice() > minPrice){
+                        if(maxPrice == 0 || offer.getPrice() < maxPrice){
+                            filteredOffers.add(offer);
+                        }
+                    }
+                }
+            }
+        }
+        return filteredOffers;
     }
 
     @Override
     public Offer addTag(Offer offer, Tag tag) {
-        return dao.addTag(offer, tag);
+        return offerDao.addTag(offer, tag);
     }
 
     @Override
     public Offer deleteTag(Offer offer, Tag tag) {
-        return dao.deleteTag(offer, tag);
+        return offerDao.deleteTag(offer, tag);
     }
 
     @Override
     public Offer updateTags(Offer offer, Set<Tag> tags) {
-        return dao.updateTags(offer, tags);
+        return offerDao.updateTags(offer, tags);
     }
 
     @Override
     public Offer updateCategory(Offer offer, Category category) {
-        return dao.updateCategory(offer, category);
+        return offerDao.updateCategory(offer, category);
     }
 }

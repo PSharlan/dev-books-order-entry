@@ -47,20 +47,23 @@ public class CustomerServiceTest {
 
     @AfterEach
     public void breakDown(){
-        customerService.delete(customer);
+        //customerService.delete(customer);
     }
 
     @Test
     public void findAllCustomers() {
-        Customer c1 = new Customer("Name1", "LastName1", "email1", LocalDate.of(1990, 5, 20 ));
-        Customer c2 = new Customer("Name2", "LastName2", "email2", LocalDate.of(1990, 5, 20 ));
-        Customer c3 = new Customer("Name3", "LastName3", "email3", LocalDate.of(1990, 5, 20 ));
+        Customer c1 = new Customer("Name10", "LastName10", "email10", LocalDate.of(1990, 5, 20 ));
+        Customer c2 = new Customer("Name20", "LastName20", "email20", LocalDate.of(1990, 5, 20 ));
+        Customer c3 = new Customer("Name30", "LastName30", "email30", LocalDate.of(1990, 5, 20 ));
+
+        c1.addAddress(addresses);
+        c2.addAddress(singleAddress);
 
         customerService.save(c1);
         customerService.save(c2);
         customerService.save(c3);
 
-        Set<Customer> foundCustomers = customerService.findAllCustomers();
+        Set<Customer> foundCustomers = customerService.findAll();
 
         assertNotNull(foundCustomers);
 

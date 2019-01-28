@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Order extends BaseEntity{
 
     @Column(name="customer_id", nullable = false)
-    private int customerId;
+    private long customerId;
 
     @Column(name= "items_count")
     private int itemsCount;
@@ -32,7 +32,7 @@ public class Order extends BaseEntity{
     @Column(name="closing_time")
     private Timestamp closing;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
 
     /**
@@ -93,11 +93,11 @@ public class Order extends BaseEntity{
         this.priceTotal = price;
     }
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
 
@@ -160,25 +160,26 @@ public class Order extends BaseEntity{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return getId() == order.getId() &&
-                customerId == order.customerId &&
+        return customerId == order.customerId &&
                 itemsCount == order.itemsCount &&
                 Double.compare(order.priceTotal, priceTotal) == 0 &&
                 paymentStatus == order.paymentStatus &&
-                orderStatus == order.orderStatus;
+                orderStatus == order.orderStatus &&
+                Objects.equals(creation, order.creation) &&
+                Objects.equals(closing, order.closing);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), customerId, itemsCount, priceTotal, paymentStatus, orderStatus, creation, closing);
+        return Objects.hash(customerId, itemsCount, priceTotal, paymentStatus, orderStatus, creation, closing, items);
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                ", customerId=" + customerId +
+                "customerId=" + customerId +
                 ", itemsAmount=" + itemsCount +
                 ", priceAmount=" + priceTotal +
                 ", paymentStatus=" + paymentStatus +

@@ -22,8 +22,8 @@ public class CustomerDaoImpl extends AbstractDao<Customer> implements CustomerDa
     }
 
     @Override
-    public Set<Customer> findAllCustomers(){
-        return new HashSet<Customer>(findAll());
+    public Set<Customer> findAll(){
+        return new HashSet<Customer>(getAll());
     }
 
     @Override

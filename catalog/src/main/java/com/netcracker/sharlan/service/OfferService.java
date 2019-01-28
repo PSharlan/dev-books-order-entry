@@ -27,6 +27,8 @@ public interface OfferService {
 
     Set<Offer> findByPrice(double price);
 
+    Set<Offer> findByParams(long categoryId, long tagId, double minPrice, double maxPrice);
+
     Offer addTag(Offer offer, Tag tag);
 
     Offer deleteTag(Offer offer, Tag tag);
