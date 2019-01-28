@@ -30,7 +30,7 @@ public class CatalogController {
     @Autowired
     TagService tagService;
 
-    @ApiOperation(value = "Return all offers")
+    @ApiOperation(value = "Return all existing offers")
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Set<Offer> getAllOffers() {
@@ -41,152 +41,220 @@ public class CatalogController {
     @RequestMapping(value = "/offers/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Offer getOfferById(
-            @ApiParam(value = "Id of offer to lookup for", required = true)
+            @ApiParam(value = "Id of an offer to lookup for", required = true)
             @PathVariable long id) {
         return offerService.findById(id);
     }
 
-    @ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create offer",
+            notes = "Required offer instance"
+    )
     @RequestMapping(value = "/offers", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Offer createOffer(@RequestBody Offer offer) {
+    public Offer createOffer(
+            @ApiParam(value = "Offer instance", required = true)
+            @RequestBody Offer offer) {
         return offerService.save(offer);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Update offer",
+            notes = "Required offer instance"
+    )
     @RequestMapping(value = "/offers", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Offer updatedOffer(@RequestBody Offer offer) {
+    public Offer updatedOffer(
+            @ApiParam(value = "Offer instance", required = true)
+            @RequestBody Offer offer) {
         return offerService.update(offer);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Update category of existing offer",
+            notes = "Instance of existing category is required"
+    )
     @RequestMapping(value = "/offers/{id}/categories", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void updatedOfferCategory(@PathVariable long id, @RequestBody Category category) {
+    public void updatedOfferCategory(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Category instance", required = true)
+            @RequestBody Category category) {
         offerService.updateCategory(offerService.findById(id), category);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Add new tag to existing offer",
+            notes = "Instance of existing tag is required"
+    )
     @RequestMapping(value = "/offers/{id}/tags", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void addOfferTag(@PathVariable long id, @RequestBody Tag tag) {
-//        Offer offer = offerService.findById(id);
-//        Set<Tag> set = offer.getTags();
-//        set.add(tag);
-//        offerService.updateTags(offer, set);
+    public void addOfferTag(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Tag instance", required = true)
+            @RequestBody Tag tag) {
         offerService.addTag(offerService.findById(id), tag);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Delete tag from existing offer",
+            notes = "Instance of existing tag is required"
+    )
     @RequestMapping(value = "/offers/{id}/tags", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOfferTag(@PathVariable long id, @RequestBody Tag tag) {
-//        Offer offer = offerService.findById(id);
-//        Set<Tag> set = offer.getTags();
-//        set.remove(tag);
-//        offerService.updateTags(offer, set);
+    public void deleteOfferTag(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Tag instance", required = true)
+            @RequestBody Tag tag) {
         offerService.deleteTag(offerService.findById(id), tag);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Delete offer by id")
     @RequestMapping(value = "/offers/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOffer(@PathVariable long id) {
+    public void deleteOffer(
+            @ApiParam(value = "Id of an offer to delete", required = true)
+            @PathVariable long id) {
         offerService.delete(id);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Return offers filtered by parameters")
     @RequestMapping(value = "/offers/filter", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Set<Offer> getOffersByParams(@RequestParam long categoryId,
-                                  @RequestParam long tagId,
-                                  @RequestParam double minPrice,
-                                  @RequestParam double maxPrice) {
+    public Set<Offer> getOffersByParams(
+            @ApiParam(value = "Category id")
+            @RequestParam long categoryId,
+            @ApiParam(value = "Tag id")
+            @RequestParam long tagId,
+            @ApiParam(value = "Min price")
+            @RequestParam double minPrice,
+            @ApiParam(value = "Max price")
+            @RequestParam double maxPrice) {
         return offerService.findByParams(categoryId, tagId, minPrice, maxPrice);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Return all existing categories")
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Category> getAllCategories() {
         return categoryService.findAll();
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Return category by id")
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Category getCategoryById(@PathVariable long id) {
+    public Category getCategoryById(
+            @ApiParam(value = "Id of a category to lookup for", required = true)
+            @PathVariable long id) {
         return categoryService.findById(id);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create category",
+            notes = "Required category instance"
+    )
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Category createCategory(@RequestBody Category category) {
+    public Category createCategory(
+            @ApiParam(value = "Category instance")
+            @RequestBody Category category) {
         return categoryService.save(category);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Update category",
+            notes = "Required category instance"
+    )
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Category updatedCategory(@RequestBody Category category) {
+    public Category updatedCategory(
+            @ApiParam(value = "Category instance")
+            @RequestBody Category category) {
         return categoryService.update(category);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Delete category by id")
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCategory(@PathVariable long id) {
+    public void deleteCategory(
+            @ApiParam(value = "Id of a category to delete", required = true)
+            @PathVariable long id) {
         categoryService.delete(id);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create list of categories",
+            notes = "List of categories is required"
+    )
     @RequestMapping(value = "/categories/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCategory(@RequestBody Set<Category> categories) {
+    public void createCategory(
+            @ApiParam(value = "List of categories", required = true)
+            @RequestBody Set<Category> categories) {
         categoryService.saveAll(categories);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Return all existing tags")
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Tag> getAllTags() {
         return tagService.findAll();
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Return tag by id")
     @RequestMapping(value = "/tags/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Tag getTagById(@PathVariable long id) {
+    public Tag getTagById(
+            @ApiParam(value = "Id of tag to lookup for", required = true)
+            @PathVariable long id) {
         return tagService.findById(id);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create tag",
+            notes = "Required tag instance"
+    )
     @RequestMapping(value = "/tags", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Tag updateTag(@RequestBody Tag tag) {
+    public Tag updateTag(
+            @ApiParam(value = "Tag instance")
+            @RequestBody Tag tag) {
         return tagService.update(tag);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(value = "Delete tag by id")
     @RequestMapping(value = "/tags/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTag(@PathVariable long id) {
+    public void deleteTag(
+            @ApiParam(value = "Id of a tag to delete", required = true)
+            @PathVariable long id) {
         tagService.delete(id);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create tag",
+            notes = "Required tag instance"
+    )
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Tag createTag(@RequestBody Tag tag) {
+    public Tag createTag(
+            @ApiParam(value = "Tag instance")
+            @RequestBody Tag tag) {
         return tagService.save(tag);
     }
 
-    //@ApiOperation(value = "")
+    @ApiOperation(
+            value = "Create list of tags",
+            notes = "List of tags is required"
+    )
     @RequestMapping(value = "/tags/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTag(@RequestBody Set<Tag> tags) {
+    public void createTag(
+            @ApiParam(value = "List of tags", required = true)
+            @RequestBody Set<Tag> tags) {
         tagService.saveAll(tags);
     }
 }
