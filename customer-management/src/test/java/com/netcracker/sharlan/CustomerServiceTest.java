@@ -47,7 +47,7 @@ public class CustomerServiceTest {
 
     @AfterEach
     public void breakDown(){
-        //customerService.delete(customer);
+        customerService.delete(customer);
     }
 
     @Test

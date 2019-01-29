@@ -23,7 +23,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findById(long id) {
         Customer customer = dao.findById(id);
-        customer.getAddresses().size();
+        if(customer != null) {
+            customer.getAddresses().size();
+        }
         return customer;
     }
 

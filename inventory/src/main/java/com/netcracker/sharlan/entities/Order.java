@@ -35,7 +35,7 @@ public class Order extends BaseEntity{
     private Timestamp closing;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
 
     /**

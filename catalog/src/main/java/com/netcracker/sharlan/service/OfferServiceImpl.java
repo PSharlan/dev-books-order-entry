@@ -33,7 +33,9 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public Offer findById(long id) {
         Offer offer = offerDao.findById(id);
-        offer.getTags().size();
+        if(offer != null) {
+            offer.getTags().size();
+        }
         return offer;
     }
 

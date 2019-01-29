@@ -1,7 +1,6 @@
 package com.netcracker.sharlan.controller;
 
 import com.netcracker.sharlan.entities.Order;
-import com.netcracker.sharlan.entities.OrderItem;
 import com.netcracker.sharlan.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

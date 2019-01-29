@@ -1,8 +1,6 @@
 package com.netcracker.sharlan.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseEntity {

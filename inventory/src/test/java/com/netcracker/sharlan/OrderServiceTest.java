@@ -20,11 +20,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertNotEquals;
-//import static org.junit.jupiter.api.Assertions.assertNotNull;
-//import static org.junit.jupiter.api.Assertions.assertNull;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
 public class OrderServiceTest {
@@ -114,6 +109,9 @@ public class OrderServiceTest {
         assertNotNull(updatedOrder.getItems());
         assertNotEquals(savedItemsAmount, updatedOrder.getItemsCount());
         assertNotEquals(savedPriceAmount, updatedOrder.getPriceTotal());
+
+        //order items need to be initialized before deleting
+        order1 = orderService.findById(savedOrder.getId());
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -18,7 +18,6 @@ public class Offer extends BaseEntity{
     @Column(name="description", nullable = false)
     private String description;
 
-    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name="category", nullable = false)
     private Category category;
@@ -26,7 +25,6 @@ public class Offer extends BaseEntity{
     @Column(name="price", nullable = false)
     private double price;
 
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tag_offer",
