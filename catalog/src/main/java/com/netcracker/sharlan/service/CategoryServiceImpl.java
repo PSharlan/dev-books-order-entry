@@ -38,6 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category update(Category category) {
+        if(dao.findById(category.getId()) == null) return null;
         return dao.update(category);
     }
 

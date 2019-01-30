@@ -46,6 +46,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offer update(Offer offer) {
+        if(offerDao.findById(offer.getId()) == null) return null;
         return offerDao.update(offer);
     }
 

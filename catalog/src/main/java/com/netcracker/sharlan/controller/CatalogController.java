@@ -3,9 +3,8 @@ package com.netcracker.sharlan.controller;
 import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
-import com.netcracker.sharlan.exceptions.CategoryNotFoundException;
-import com.netcracker.sharlan.exceptions.OfferNotFoundException;
-import com.netcracker.sharlan.exceptions.TagNotFoundException;
+import com.netcracker.sharlan.exceptions.EntityNotFoundException;
+import com.netcracker.sharlan.exceptions.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.CategoryService;
 import com.netcracker.sharlan.service.OfferService;
 import com.netcracker.sharlan.service.TagService;
@@ -51,7 +50,7 @@ public class CatalogController {
             @PathVariable long id) {
 
         Offer offer = offerService.findById(id);
-        if(offer == null) throw new OfferNotFoundException(id);
+        if(offer == null) throw new EntityNotFoundException(Offer.class, id);
         return offer;
     }
 
@@ -77,8 +76,9 @@ public class CatalogController {
             @ApiParam(value = "Offer instance", required = true)
             @RequestBody Offer offer) {
 
-        if(offerService.findById(offer.getId()) == null) throw new OfferNotFoundException();
-        return offerService.update(offer);
+        Offer updatedOffer = offerService.update(offer);
+        if(updatedOffer == null) throw new EntityNotUpdatedException(Offer.class, offer.getId());
+        return updatedOffer;
     }
 
     @ApiOperation(
@@ -92,10 +92,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Category instance", required = true)
             @RequestBody Category category) {
-
-        Offer offer = offerService.findById(id);
-        if(offer == null) throw new OfferNotFoundException(id);
-        offerService.updateCategory(offer, category);
+        offerService.updateCategory(offerService.findById(id), category);
     }
 
     @ApiOperation(
@@ -109,9 +106,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
             @RequestBody Tag tag) {
-        Offer offer = offerService.findById(id);
-        if(offer == null) throw new OfferNotFoundException(id);
-        offerService.addTag(offer, tag);
+        offerService.addTag(offerService.findById(id), tag);
     }
 
     @ApiOperation(
@@ -125,9 +120,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
             @RequestBody Tag tag) {
-        Offer offer = offerService.findById(id);
-        if(offer == null) throw new OfferNotFoundException(id);
-        offerService.deleteTag(offer, tag);
+        offerService.deleteTag(offerService.findById(id), tag);
     }
 
     @ApiOperation(value = "Delete offer by id")
@@ -136,9 +129,7 @@ public class CatalogController {
     public void deleteOffer(
             @ApiParam(value = "Id of an offer to delete", required = true)
             @PathVariable long id) {
-        Offer offer = offerService.findById(id);
-        if(offer == null) throw new OfferNotFoundException(id);
-        offerService.delete(offer);
+        offerService.delete(id);
     }
 
     @ApiOperation(value = "Return offers filtered by parameters")
@@ -169,8 +160,9 @@ public class CatalogController {
     public Category getCategoryById(
             @ApiParam(value = "Id of a category to lookup for", required = true)
             @PathVariable long id) {
+
         Category category = categoryService.findById(id);
-        if(category == null) throw new CategoryNotFoundException(id);
+        if(category == null) throw new EntityNotFoundException(Category.class, id);
         return category;
     }
 
@@ -195,8 +187,10 @@ public class CatalogController {
     public Category updatedCategory(
             @ApiParam(value = "Category instance")
             @RequestBody Category category) {
-        if(categoryService.findById(category.getId()) == null) throw new CategoryNotFoundException();
-        return categoryService.update(category);
+
+        Category updatedCategory = categoryService.update(category);
+        if(updatedCategory == null) throw new EntityNotUpdatedException(Category.class, category.getId());
+        return updatedCategory;
     }
 
     @ApiOperation(value = "Delete category by id")
@@ -205,9 +199,7 @@ public class CatalogController {
     public void deleteCategory(
             @ApiParam(value = "Id of a category to delete", required = true)
             @PathVariable long id) {
-        Category category = categoryService.findById(id);
-        if(category == null) throw new CategoryNotFoundException(id);
-        categoryService.delete(category);
+        categoryService.delete(id);
     }
 
     @ApiOperation(
@@ -236,7 +228,7 @@ public class CatalogController {
             @ApiParam(value = "Id of tag to lookup for", required = true)
             @PathVariable long id) {
         Tag tag = tagService.findById(id);
-        if(tag == null) throw new TagNotFoundException(id);
+        if(tag == null) throw new EntityNotFoundException(Tag.class, id);
         return tag;
     }
 
@@ -249,8 +241,9 @@ public class CatalogController {
     public Tag updateTag(
             @ApiParam(value = "Tag instance")
             @RequestBody Tag tag) {
-        if(tagService.findById(tag.getId()) == null) throw new TagNotFoundException();
-        return tagService.update(tag);
+        Tag updatedTag = tagService.update(tag);
+        if(updatedTag == null) throw new EntityNotUpdatedException(Category.class, tag.getId());
+        return updatedTag;
     }
 
     @ApiOperation(value = "Delete tag by id")
@@ -259,9 +252,7 @@ public class CatalogController {
     public void deleteTag(
             @ApiParam(value = "Id of a tag to delete", required = true)
             @PathVariable long id) {
-        Tag tag = tagService.findById(id);
-        if(tag == null) throw new TagNotFoundException(id);
-        tagService.delete(tag);
+        tagService.delete(id);
     }
 
     @ApiOperation(
