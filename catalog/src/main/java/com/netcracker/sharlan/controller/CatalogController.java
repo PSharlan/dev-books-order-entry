@@ -11,6 +11,8 @@ import com.netcracker.sharlan.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ import java.util.Set;
 @RequestMapping("/api/v1/catalog")
 @Api(value = "/api/v1/catalog", description = "Manage offers")
 public class CatalogController {
+
+    private static final Logger LOGGER = LogManager.getLogger(CatalogController.class.getName());
 
     OfferService offerService;
     CategoryService categoryService;
@@ -49,8 +53,10 @@ public class CatalogController {
             @ApiParam(value = "Id of an offer to lookup for", required = true)
             @PathVariable long id) {
 
+        LOGGER.info("First log message");
         Offer offer = offerService.findById(id);
         if(offer == null) throw new EntityNotFoundException(Offer.class, id);
+        LOGGER.info("Last log message");
         return offer;
     }
 

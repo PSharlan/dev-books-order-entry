@@ -4,6 +4,8 @@ import com.netcracker.sharlan.dao.OfferDao;
 import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import java.util.Set;
 @Transactional
 public class OfferServiceImpl implements OfferService {
 
+    private static final Logger LOGGER = LogManager.getLogger(OfferServiceImpl.class.getName());
+
     private OfferDao offerDao;
     private TagService tagService;
 
@@ -27,52 +31,71 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Set<Offer> findAll() {
-        return offerDao.findAll();
+        LOGGER.info("Searching for all offers");
+        Set<Offer> set = offerDao.findAll();
+        LOGGER.info("Founded offers: " + set);
+        return set;
     }
 
     @Override
     public Offer findById(long id) {
+        LOGGER.info("Searching for offer by id: " + id);
         Offer offer = offerDao.findById(id);
         if(offer != null) {
+            LOGGER.info("Founded offer: " + offer);
             offer.getTags().size();
+        }else{
+            LOGGER.info("Offer not found");
         }
         return offer;
     }
 
     @Override
     public Offer save(Offer offer) {
-        return offerDao.save(offer);
+        LOGGER.info("Saving offer : " + offer);
+        offer = offerDao.save(offer);
+        LOGGER.info("Saved offer : " + offer);
+        return offer;
     }
 
     @Override
     public Offer update(Offer offer) {
-        if(offerDao.findById(offer.getId()) == null) return null;
-        return offerDao.update(offer);
+        LOGGER.info("Updating offer : " + offer);
+        if(offerDao.findById(offer.getId()) == null){
+            LOGGER.info("Offer with id: " + offer.getId() + " not found. Offer not updated");
+            return null;
+        }
+        Offer updatedOffer = offerDao.update(offer);
+        LOGGER.info("Updated offer : " + updatedOffer);
+        return updatedOffer;
     }
 
     @Override
     public void delete(Offer offer) {
-        offerDao.delete(offer);
+        delete(offer.getId());
     }
 
     @Override
     public void delete(long id) {
+        LOGGER.info("Deleting offer with id: " + id);
         offerDao.delete(id);
+        LOGGER.info("Deleted offer with id: " + id);
     }
 
     @Override
     public Set<Offer> findByTag(Tag tag) {
-        return offerDao.findByTag(tag);
+        LOGGER.info("Searching for offers by tag: " + tag);
+        Set<Offer> set = offerDao.findByTag(tag);
+        LOGGER.info("Founded offers: " + set);
+        return set;
     }
 
     @Override
     public Set<Offer> findByCategory(Category category) {
-        return offerDao.findByCategory(category);
-    }
-
-    @Override
-    public Set<Offer> findByPrice(double price) {
-        return offerDao.findByPrice(price);
+        LOGGER.info("Searching for offers by category: " + category);
+        Set<Offer> set = offerDao.findByCategory(category);
+        LOGGER.info("Founded offers: " + set);
+        return set;
     }
 
     @Override
@@ -81,6 +104,12 @@ public class OfferServiceImpl implements OfferService {
         if(tagId != 0){
             tagForFilter = tagService.findById(tagId);
         }
+
+        LOGGER.info("Searching for offers by parameters: " +
+                "category id = " + categoryId +
+                " | tag id = " + tagId +
+                " | minimum price = " + minPrice +
+                " | maximum price = " + maxPrice);
 
         Set<Offer> allOffers = offerDao.findAll();
         Set<Offer> filteredOffers = new HashSet<>();
@@ -96,26 +125,31 @@ public class OfferServiceImpl implements OfferService {
 
             }
         }
+        LOGGER.info("Founded offers: " + filteredOffers);
         return filteredOffers;
     }
 
     @Override
     public Offer addTag(Offer offer, Tag tag) {
+        LOGGER.info("Add tag: " + tag + " for Offer: " + offer);
         return offerDao.addTag(offer, tag);
     }
 
     @Override
     public Offer deleteTag(Offer offer, Tag tag) {
+        LOGGER.info("Delete tag: " + tag + " from Offer: " + offer);
         return offerDao.deleteTag(offer, tag);
     }
 
     @Override
     public Offer updateTags(Offer offer, Set<Tag> tags) {
+        LOGGER.info("Add tags: " + tags + " for Offer: " + offer);
         return offerDao.updateTags(offer, tags);
     }
 
     @Override
     public Offer updateCategory(Offer offer, Category category) {
+        LOGGER.info("Set category : " + category + " for Offer: " + offer);
         return offerDao.updateCategory(offer, category);
     }
 }

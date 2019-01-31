@@ -59,12 +59,6 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
     }
 
     @Override
-    public Set<Offer> findByPrice(double price) {
-        HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.price = " + price).getResultList());
-        return set;
-    }
-
-    @Override
     public Offer addTag(Offer offer, Tag tag) {
         offer.getTags().add(tag);
         return merge(offer);

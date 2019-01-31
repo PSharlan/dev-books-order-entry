@@ -24,8 +24,6 @@ public interface OfferDao {
 
     Set<Offer> findByCategory(Category category);
 
-    Set<Offer> findByPrice(double price);
-
     Offer addTag(Offer offer, Tag tag);
 
     Offer deleteTag(Offer offer, Tag tag);
