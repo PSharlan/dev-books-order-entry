@@ -6,7 +6,6 @@ import com.netcracker.sharlan.entities.Tag;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -56,12 +55,6 @@ public class OfferDaoImpl extends AbstractDao<Offer> implements OfferDao {
     @Override
     public Set<Offer> findByCategory(Category category) {
         HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.category = " + category.getId()).getResultList());
-        return set;
-    }
-
-    @Override
-    public Set<Offer> findByPrice(double price) {
-        HashSet<Offer> set = new HashSet<Offer>(getEntityManager().createQuery("SELECT o FROM Offer o where o.price = " + price).getResultList());
         return set;
     }
 

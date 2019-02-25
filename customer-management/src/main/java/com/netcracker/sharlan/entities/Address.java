@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -19,8 +21,9 @@ public class Address extends BaseEntity{
     @Column(name="house_number")
     private int houseNum;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="customer", nullable = false)
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name= "customer_id", nullable = false)
     private Customer customer;
 
     public Address(String country, String city, String street, int houseNum) {

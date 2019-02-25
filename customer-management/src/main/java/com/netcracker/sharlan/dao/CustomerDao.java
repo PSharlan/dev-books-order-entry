@@ -8,7 +8,9 @@ public interface CustomerDao {
 
     Customer findById(long id);
 
-    Set<Customer> findAllCustomers();
+    Customer findByEmail(String email);
+
+    Set<Customer> findAll();
 
     Set<Customer> findByName(String name);
 

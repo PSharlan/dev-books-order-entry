@@ -3,180 +3,358 @@ package com.netcracker.sharlan.controller;
 import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
+import com.netcracker.sharlan.exceptions.EntityNotFoundException;
+import com.netcracker.sharlan.exceptions.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.CategoryService;
 import com.netcracker.sharlan.service.OfferService;
 import com.netcracker.sharlan.service.TagService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 
 @RestController
 @RequestMapping("/api/v1/catalog")
+@Api(value = "/api/v1/catalog", description = "Manage offers")
 public class CatalogController {
 
-    @Autowired
+    private static final Logger LOGGER = LogManager.getLogger(CatalogController.class.getName());
+
     OfferService offerService;
-    @Autowired
     CategoryService categoryService;
-    @Autowired
     TagService tagService;
 
+    @Autowired
+    public CatalogController(OfferService offerService, CategoryService categoryService, TagService tagService){
+        this.offerService = offerService;
+        this.categoryService = categoryService;
+        this.tagService = tagService;
+    }
+
+    @ApiOperation(value = "Return all existing offers")
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Set<Offer> getAllOffers() {
-        return offerService.findAll();
+        LOGGER.info("Searching for all offers");
+        Set<Offer> allOffers = offerService.findAll();
+        LOGGER.info("Found offers: " + allOffers);
+        return allOffers;
     }
 
+    @ApiOperation(value = "Return list of an offers by ids")
+    @RequestMapping(value = "/offers/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public List<Offer> getOffersByIds(@RequestParam List<Integer> ids) {
+        LOGGER.info("Searching for offers by ids: " + ids);
+        List<Offer> foundOffers = offerService.findById(ids);
+        LOGGER.info("Found offers: " + foundOffers);
+        return foundOffers;
+    }
+
+    @ApiOperation(value = "Return offer by id")
     @RequestMapping(value = "/offers/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Offer getOfferById(@PathVariable long id) {
-        return offerService.findById(id);
+    public Offer getOfferById(
+            @ApiParam(value = "Id of an offer to lookup for", required = true)
+            @PathVariable long id) {
+
+        LOGGER.info("Searching for an offer with id: " + id);
+        Offer offer = offerService.findById(id);
+        if(offer == null) {
+            LOGGER.info("Offer not found");
+            throw new EntityNotFoundException(Offer.class, id);
+        }
+        LOGGER.info("Found offer: " + offer);
+        return offer;
     }
 
+    @ApiOperation(
+            value = "Create offer",
+            notes = "Required offer instance"
+    )
     @RequestMapping(value = "/offers", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Offer createOffer(@RequestBody Offer offer) {
-        return offerService.save(offer);
+    public Offer createOffer(
+            @ApiParam(value = "Offer instance", required = true)
+            @RequestBody Offer offer) {
+        LOGGER.info("Saving offer: " + offer);
+        Offer savedOffer = offerService.save(offer);
+        LOGGER.info("Saved offer id: " + offer.getId());
+        return savedOffer;
     }
 
+    @ApiOperation(
+            value = "Update offer",
+            notes = "Required offer instance"
+    )
     @RequestMapping(value = "/offers", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Offer updatedOffer(@RequestBody Offer offer) {
-        return offerService.update(offer);
+    public Offer updatedOffer(
+            @ApiParam(value = "Offer instance", required = true)
+            @RequestBody Offer offer) {
+        LOGGER.info("Updating offer: " + offer);
+        Offer updatedOffer = offerService.update(offer);
+        if(updatedOffer == null) {
+            LOGGER.info("Can not update not existing offer");
+            throw new EntityNotUpdatedException(Offer.class, offer.getId());
+        }
+        LOGGER.info("Updated offer: " + offer);
+        return updatedOffer;
     }
 
+    @ApiOperation(
+            value = "Update category of existing offer",
+            notes = "Instance of existing category is required"
+    )
     @RequestMapping(value = "/offers/{id}/categories", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void updatedOfferCategory(@PathVariable long id, @RequestBody Category category) {
+    public void updatedOfferCategory(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Category instance", required = true)
+            @RequestBody Category category) {
+        LOGGER.info("New category: " + category + " for offer id: " + id );
         offerService.updateCategory(offerService.findById(id), category);
     }
 
+    @ApiOperation(
+            value = "Add new tag to existing offer",
+            notes = "Instance of existing tag is required"
+    )
     @RequestMapping(value = "/offers/{id}/tags", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void addOfferTag(@PathVariable long id, @RequestBody Tag tag) {
-        Offer offer = offerService.findById(id);
-        Set<Tag> set = offer.getTags();
-        set.add(tag);
-        offerService.updateTags(offer, set);
+    public void addOfferTag(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Tag instance", required = true)
+            @RequestBody Tag tag) {
+        LOGGER.info("New tag: " + tag + " for offer id: " + id );
+        offerService.addTag(offerService.findById(id), tag);
     }
 
+    @ApiOperation(
+            value = "Delete tag from existing offer",
+            notes = "Instance of existing tag is required"
+    )
     @RequestMapping(value = "/offers/{id}/tags", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOfferTag(@PathVariable long id, @RequestBody Tag tag) {
-        Offer offer = offerService.findById(id);
-        Set<Tag> set = offer.getTags();
-        set.remove(tag);
-        offerService.updateTags(offer, set);
+    public void deleteOfferTag(
+            @ApiParam(value = "Id of an offer to update", required = true)
+            @PathVariable long id,
+            @ApiParam(value = "Tag instance", required = true)
+            @RequestBody Tag tag) {
+        LOGGER.info("Removing tag: " + tag + " for offer id: " + id );
+        offerService.deleteTag(offerService.findById(id), tag);
     }
 
+    @ApiOperation(value = "Delete offer by id")
     @RequestMapping(value = "/offers/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOffer(@PathVariable long id) {
+    public void deleteOffer(
+            @ApiParam(value = "Id of an offer to delete", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Deleting offer with id: " + id);
         offerService.delete(id);
+        LOGGER.info("Offer deleted");
     }
 
+    @ApiOperation(value = "Return offers filtered by parameters")
     @RequestMapping(value = "/offers/filter", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Set<Offer> getOffersByParams(@RequestParam long categoryId,
-                                  @RequestParam long tagId,
-                                  @RequestParam double startPrice,
-                                  @RequestParam double endPrice) {
-
-        Tag tagForFilter = null;
-        if(tagId != 0){
-            tagForFilter = tagService.findById(tagId);
-        }
-
-        Set<Offer> allOffers = offerService.findAll();
-        Set<Offer> filteredOffers = new HashSet<>();
-        for (Offer offer: allOffers) {
-            if(categoryId == 0 || offer.getCategory().getId() == categoryId){
-                if(tagForFilter == null || offer.getTags().contains(tagForFilter)){
-                    if(startPrice == 0 || offer.getPrice() > startPrice){
-                        if(endPrice == 0 || offer.getPrice() < endPrice){
-                            filteredOffers.add(offer);
-                        }
-                    }
-                }
-            }
-        }
-        return filteredOffers;
+    public Set<Offer> getOffersByParams(
+            @ApiParam(value = "Category id")
+            @RequestParam long categoryId,
+            @ApiParam(value = "Tag id")
+            @RequestParam long tagId,
+            @ApiParam(value = "Min price")
+            @RequestParam double minPrice,
+            @ApiParam(value = "Max price")
+            @RequestParam double maxPrice) {
+        LOGGER.info("Search an offers by params. " +
+                "Category id: " + categoryId +
+                " | Tag id: " + tagId +
+                " | Min price: " + minPrice +
+                " | Max price: " + maxPrice);
+        Set<Offer> foundOffers = offerService.findByParams(categoryId, tagId, minPrice, maxPrice);
+        LOGGER.info("Found offers: " + foundOffers);
+        return foundOffers;
     }
 
+    @ApiOperation(value = "Return all existing categories")
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Category> getAllCategories() {
-        return categoryService.findAll();
+        LOGGER.info("Search for all categories");
+        List<Category> foundCategories = categoryService.findAll();
+        LOGGER.info("Found categories: "  + foundCategories);
+        return foundCategories;
     }
 
+    @ApiOperation(value = "Return category by id")
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Category getCategoryById(@PathVariable long id) {
-        return categoryService.findById(id);
+    public Category getCategoryById(
+            @ApiParam(value = "Id of a category to lookup for", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Searching for a category by id: " + id);
+        Category category = categoryService.findById(id);
+        if(category == null) {
+            LOGGER.info("Category not found");
+            throw new EntityNotFoundException(Category.class, id);
+        }
+        LOGGER.info("Found category: " + category);
+        return category;
     }
 
+    @ApiOperation(
+            value = "Create category",
+            notes = "Required category instance"
+    )
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.save(category);
+    public Category createCategory(
+            @ApiParam(value = "Category instance")
+            @RequestBody Category category) {
+        LOGGER.info("Saving category: " + category);
+        Category savedCategory = categoryService.save(category);
+        LOGGER.info("Saved category: " + savedCategory + " with id: " + savedCategory.getId());
+        return savedCategory;
     }
 
+    @ApiOperation(
+            value = "Update category",
+            notes = "Required category instance"
+    )
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Category updatedCategory(@RequestBody Category category) {
-        return categoryService.update(category);
+    public Category updatedCategory(
+            @ApiParam(value = "Category instance")
+            @RequestBody Category category) {
+        LOGGER.info("Updating category: " + category);
+        Category updatedCategory = categoryService.update(category);
+        if(updatedCategory == null) {
+            LOGGER.info("Can not update not existing category");
+            throw new EntityNotUpdatedException(Category.class, category.getId());
+        }
+        LOGGER.info("Updated category: " + updatedCategory);
+        return updatedCategory;
     }
 
+    @ApiOperation(value = "Delete category by id")
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCategory(@PathVariable long id) {
+    public void deleteCategory(
+            @ApiParam(value = "Id of a category to delete", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Deleting category with id: " + id);
         categoryService.delete(id);
+        LOGGER.info("Category deleted");
     }
 
+    @ApiOperation(
+            value = "Create list of categories",
+            notes = "List of categories is required"
+    )
     @RequestMapping(value = "/categories/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCategory(@RequestBody Set<Category> categories) {
+    public void createCategories(
+            @ApiParam(value = "List of categories", required = true)
+            @RequestBody Set<Category> categories) {
+        LOGGER.info("Saving categories: " + categories);
         categoryService.saveAll(categories);
+        LOGGER.info("Categories saved");
     }
 
+    @ApiOperation(value = "Return all existing tags")
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Tag> getAllTags() {
-        return tagService.findAll();
+        LOGGER.info("Search for all tags");
+        List<Tag> foundTags = tagService.findAll();
+        LOGGER.info("Found tags: "  + foundTags);
+        return foundTags;
     }
 
+    @ApiOperation(value = "Return tag by id")
     @RequestMapping(value = "/tags/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Tag getTagById(@PathVariable long id) {
-        return tagService.findById(id);
+    public Tag getTagById(
+            @ApiParam(value = "Id of tag to lookup for", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Search for a tag with id: " + id);
+        Tag tag = tagService.findById(id);
+        if(tag == null) {
+            LOGGER.info("Tag not found");
+            throw new EntityNotFoundException(Tag.class, id);
+        }
+        LOGGER.info("Found tag: " + tag);
+        return tag;
     }
 
+    @ApiOperation(
+            value = "Update tag",
+            notes = "Required tag instance"
+    )
     @RequestMapping(value = "/tags", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Tag updateTag(@RequestBody Tag tag) {
-        return tagService.update(tag);
+    public Tag updateTag(
+            @ApiParam(value = "Tag instance")
+            @RequestBody Tag tag) {
+        LOGGER.info("Updating tag: " + tag);
+        Tag updatedTag = tagService.update(tag);
+        if(updatedTag == null){
+            LOGGER.info("Can not update not existing tag");
+            throw new EntityNotUpdatedException(Category.class, tag.getId());
+        }
+        LOGGER.info("Updated tag: " + updatedTag);
+        return updatedTag;
     }
 
+    @ApiOperation(value = "Delete tag by id")
     @RequestMapping(value = "/tags/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTag(@PathVariable long id) {
+    public void deleteTag(
+            @ApiParam(value = "Id of a tag to delete", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Deleting tag with id: " + id);
         tagService.delete(id);
+        LOGGER.info("Tag deleted");
     }
 
+    @ApiOperation(
+            value = "Create tag",
+            notes = "Required tag instance"
+    )
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Tag createTag(@RequestBody Tag tag) {
-        return tagService.save(tag);
+    public Tag createTag(
+            @ApiParam(value = "Tag instance")
+            @RequestBody Tag tag) {
+        LOGGER.info("Saving tag: " + tag);
+        Tag savedTag = tagService.save(tag);
+        LOGGER.info("Saved tag: " + tag + " with id: " + tag.getId());
+        return savedTag;
     }
 
+    @ApiOperation(
+            value = "Create list of tags",
+            notes = "List of tags is required"
+    )
     @RequestMapping(value = "/tags/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTag(@RequestBody Set<Tag> tags) {
+    public void createTags(
+            @ApiParam(value = "List of tags", required = true)
+            @RequestBody Set<Tag> tags) {
+        LOGGER.info("Saving tags: " + tags);
         tagService.saveAll(tags);
+        LOGGER.info("Tags saved");
     }
 }

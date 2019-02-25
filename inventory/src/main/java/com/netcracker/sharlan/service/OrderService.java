@@ -2,17 +2,21 @@ package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.entities.Order;
 
-import java.util.Set;
+import java.util.List;
 
 public interface OrderService {
 
     Order save(Order order);
 
-    Set<Order> findAllOrders();
+    Order update(Order order);
+
+    List<Order> findAll();
 
     Order findById(long id);
 
-    Order update(Order order);
+    List<Order> findByCustomerId(long customerId);
+
+    List<Order> findCustomerOrdersByCategory(long customerId, String category);
 
     void delete(Order order);
 

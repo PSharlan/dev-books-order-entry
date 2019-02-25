@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -9,9 +9,9 @@ import java.util.Objects;
 @Table(name="order_item")
 public class OrderItem extends BaseEntity{
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
+    @ManyToOne
     @JoinColumn(name="order_id", nullable = false)
-    @JsonIgnore
     private Order order;
 
     @Column(name="offer_id")
@@ -101,12 +101,11 @@ public class OrderItem extends BaseEntity{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof OrderItem)) return false;
         OrderItem orderItem = (OrderItem) o;
-        return getId() == orderItem.getId() &&
-                order == orderItem.order &&
-                offerId == orderItem.offerId &&
+        return offerId == orderItem.offerId&&
                 Double.compare(orderItem.price, price) == 0 &&
+                Objects.equals(order, orderItem.order) &&
                 Objects.equals(name, orderItem.name) &&
                 Objects.equals(description, orderItem.description) &&
                 Objects.equals(category, orderItem.category);
@@ -114,13 +113,13 @@ public class OrderItem extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), order, offerId, name, description, category, price);
+        return Objects.hash(order, offerId, name, description, category ,price);
     }
 
     @Override
     public String toString() {
         return "OrderItem{" +
-                ", offerId=" + offerId +
+                "offerId=" + offerId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +

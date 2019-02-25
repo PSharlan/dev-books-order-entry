@@ -9,3 +9,4 @@ public class CatalogApplication {
         SpringApplication.run(CatalogApplication.class, args);
     }
 }
+

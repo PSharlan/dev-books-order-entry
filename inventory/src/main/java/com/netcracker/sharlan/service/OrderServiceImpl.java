@@ -2,50 +2,113 @@ package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.OrderDao;
 import com.netcracker.sharlan.entities.Order;
+import com.netcracker.sharlan.entities.OrderItem;
+import com.netcracker.sharlan.entities.OrderStatus;
+import com.netcracker.sharlan.entities.PaymentStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-    private OrderDao dao;
+    private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class.getName());
+
+    private OrderDao orderDao;
 
     @Autowired
-    public OrderServiceImpl(OrderDao dao){
-        this.dao = dao;
+    public OrderServiceImpl(OrderDao orderDao){
+        this.orderDao = orderDao;
     }
 
     @Override
     public Order save(Order order) {
-        return dao.save(order);
-    }
-
-    @Override
-    public Set<Order> findAllOrders() {
-        return dao.findAllOrders();
-    }
-
-    @Override
-    public Order findById(long id) {
-        return dao.findById(id);
+        LOGGER.info("Saving order: " + order);
+        LOGGER.info("Order items: " + order.getItems());
+        order.setCreation(new Timestamp(new Date().getTime()));
+        order.setOrderStatus(OrderStatus.NEW);
+        order.setPaymentStatus(PaymentStatus.NONE);
+        order.addOrderItems(order.getItems());
+        LOGGER.info("Calculated order: " + order);
+        LOGGER.info("Order items: " + order.getItems());
+        Order savedOrder = orderDao.save(order);
+        return order;
     }
 
     @Override
     public Order update(Order order) {
-        return dao.update(order);
+        LOGGER.info("Updating order: " + order);
+        if(findById(order.getId()) == null) {
+            LOGGER.info("Offer not fond");
+            return null;
+        }
+        order.addOrderItems(order.getItems());
+        LOGGER.info("Calculated order: " + order);
+        Order savedOrder = orderDao.save(order);
+        return order;
+    }
+
+    @Override
+    public List<Order> findAll() {
+        LOGGER.info("Search for all orders");
+        List<Order> foundOrders = orderDao.findAll();
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders;
+    }
+
+    @Override
+    public Order findById(long id) {
+        LOGGER.info("Searching for an order by id: " + id);
+        Order order = orderDao.findById(id).orElse(null);
+        if(order != null){
+            order.getItems().size();
+        }
+        LOGGER.info("Found order: " + order);
+        return order;
+    }
+
+    @Override
+    public List<Order> findByCustomerId(long customerId) {
+        LOGGER.info("Searching for orders by customer id: " + customerId);
+        List<Order> foundOrders = orderDao.findByCustomerId(customerId);
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders;
+    }
+
+    @Override
+    public List<Order> findCustomerOrdersByCategory(long customerId, String category) {
+        LOGGER.info("Finding orders by category: " + category + " and customer id: " + customerId);
+        List<Order> allOrders = orderDao.findByCustomerId(customerId);
+        List<Order> filteredOrders = new ArrayList<>();
+        for (Order order: allOrders) {
+            for (OrderItem item : order.getItems()) {
+                if (item.getCategory().equals(category)){
+                    filteredOrders.add(order);
+                    break;
+                }
+            }
+        }
+        System.out.println("Found orders: " + filteredOrders);
+        return filteredOrders;
     }
 
     @Override
     public void delete(Order order) {
-        dao.delete(order);
+        LOGGER.info("Deleting order: " + order);
+        orderDao.delete(order);
     }
 
     @Override
     public void delete(long id) {
-        dao.delete(id);
+        LOGGER.info("Deleting order by id: " + id);
+        orderDao.deleteById(id);
     }
 }

@@ -13,6 +13,8 @@ public interface OfferService {
 
     Offer findById(long id);
 
+    public List<Offer> findById(List<Integer> ids);
+
     Offer save(Offer offer);
 
     Offer update(Offer offer);
@@ -25,7 +27,7 @@ public interface OfferService {
 
     Set<Offer> findByCategory(Category category);
 
-    Set<Offer> findByPrice(double price);
+    Set<Offer> findByParams(long categoryId, long tagId, double minPrice, double maxPrice);
 
     Offer addTag(Offer offer, Tag tag);
 

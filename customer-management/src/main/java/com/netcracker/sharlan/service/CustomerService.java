@@ -8,11 +8,13 @@ public interface CustomerService {
 
     Customer findById(long id);
 
-    Set<Customer> findAllCustomers();
+    Set<Customer> findAll();
 
     Set<Customer> findByName(String name);
 
     Set<Customer> findByLastName(String lastName);
+
+    Customer findByEmail(String email);
 
     Customer save(Customer customer);
 

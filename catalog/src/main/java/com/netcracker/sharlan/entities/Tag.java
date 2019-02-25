@@ -1,6 +1,8 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -14,13 +16,13 @@ public class Tag extends BaseEntity {
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tag_offer",
             joinColumns = { @JoinColumn(name = "tag_id") },
             inverseJoinColumns = { @JoinColumn(name = "offer_id") }
     )
-    @JsonIgnore
     private Set<Offer> offers = new HashSet<Offer>();
 
     public Tag(String name){

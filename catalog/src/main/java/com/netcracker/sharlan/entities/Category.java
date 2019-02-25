@@ -14,7 +14,7 @@ public class Category extends BaseEntity{
     @Column(name="name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     @JsonIgnore
     private Set<Offer> offers = new HashSet<Offer>();
 

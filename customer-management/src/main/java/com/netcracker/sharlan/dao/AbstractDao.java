@@ -24,7 +24,7 @@ public abstract class AbstractDao<T> {
         return foundEntity;
     }
 
-    public List<T> findAll() {
+    public List<T> getAll() {
         List<T> foundEntities = em.createQuery("SELECT e FROM " + persistentClass.getSimpleName() + " e", persistentClass).getResultList();
         return foundEntities;
     }

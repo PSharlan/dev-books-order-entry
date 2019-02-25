@@ -1,12 +1,18 @@
 package com.netcracker.sharlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.*;
 
 @Entity
 @Table(name = "customer")
 public class Customer extends BaseEntity{
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name="role")
+    private Role role;
 
     @Column(name="name", nullable = false)
     private String name;
@@ -17,10 +23,15 @@ public class Customer extends BaseEntity{
     @Column(name="email", nullable = false, unique = true)
     private String email;
 
-    @Column(name="date_of_birth", nullable = false)
-    private LocalDate dateOfBirth;
+    @Column(name="password", nullable = false)
+    private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customer")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name="date_of_birth")
+    private Date dateOfBirth;
+
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customer", orphanRemoval=true)
     private Set<Address> addresses = new HashSet<>();
 
     /**
@@ -31,10 +42,12 @@ public class Customer extends BaseEntity{
     }
 
 
-    public Customer(String name, String lastName, String email, LocalDate dateOfBirth) {
+    public Customer(String name, String lastName, String email, String password, Role role, Date dateOfBirth) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
+        this.role = role;
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -83,11 +96,11 @@ public class Customer extends BaseEntity{
         this.email = email;
     }
 
-    public LocalDate getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -99,6 +112,23 @@ public class Customer extends BaseEntity{
         this.addresses = addresses;
     }
 
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,12 +137,13 @@ public class Customer extends BaseEntity{
         return Objects.equals(name, customer.name) &&
                 Objects.equals(lastName, customer.lastName) &&
                 Objects.equals(email, customer.email) &&
+                Objects.equals(role, customer.role) &&
                 Objects.equals(dateOfBirth, customer.dateOfBirth);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, lastName, email, dateOfBirth);
+        return Objects.hash(name, lastName, email, role, dateOfBirth);
     }
 
     @Override
@@ -121,7 +152,9 @@ public class Customer extends BaseEntity{
                 "name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 '}';
     }
+
 }
