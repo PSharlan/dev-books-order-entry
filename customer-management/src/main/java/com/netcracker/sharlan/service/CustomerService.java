@@ -14,6 +14,8 @@ public interface CustomerService {
 
     Set<Customer> findByLastName(String lastName);
 
+    Customer findByEmail(String email);
+
     Customer save(Customer customer);
 
     Customer update(Customer customer);

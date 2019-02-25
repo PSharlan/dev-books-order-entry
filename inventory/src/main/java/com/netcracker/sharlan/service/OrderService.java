@@ -8,6 +8,8 @@ public interface OrderService {
 
     Order save(Order order);
 
+    Order update(Order order);
+
     List<Order> findAll();
 
     Order findById(long id);

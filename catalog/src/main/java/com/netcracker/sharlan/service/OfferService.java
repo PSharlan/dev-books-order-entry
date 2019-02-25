@@ -4,6 +4,7 @@ import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.entities.Offer;
 import com.netcracker.sharlan.entities.Tag;
 
+import java.util.List;
 import java.util.Set;
 
 public interface OfferService {
@@ -11,6 +12,8 @@ public interface OfferService {
     Set<Offer> findAll();
 
     Offer findById(long id);
+
+    public List<Offer> findById(List<Integer> ids);
 
     Offer save(Offer offer);
 

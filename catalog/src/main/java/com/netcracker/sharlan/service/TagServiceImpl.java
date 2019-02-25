@@ -60,7 +60,7 @@ public class TagServiceImpl implements TagService {
             LOGGER.info("Tag with id: " + tag.getId() + " not found. Tag not updated");
             return null;
         }
-        Tag updatedTag = dao.update(t);
+        Tag updatedTag = dao.update(tag);
         LOGGER.info("Updated tag : " + updatedTag);
         return updatedTag;
     }

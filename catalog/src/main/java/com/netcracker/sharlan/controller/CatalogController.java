@@ -43,7 +43,20 @@ public class CatalogController {
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Set<Offer> getAllOffers() {
-        return offerService.findAll();
+        LOGGER.info("Searching for all offers");
+        Set<Offer> allOffers = offerService.findAll();
+        LOGGER.info("Found offers: " + allOffers);
+        return allOffers;
+    }
+
+    @ApiOperation(value = "Return list of an offers by ids")
+    @RequestMapping(value = "/offers/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public List<Offer> getOffersByIds(@RequestParam List<Integer> ids) {
+        LOGGER.info("Searching for offers by ids: " + ids);
+        List<Offer> foundOffers = offerService.findById(ids);
+        LOGGER.info("Found offers: " + foundOffers);
+        return foundOffers;
     }
 
     @ApiOperation(value = "Return offer by id")
@@ -53,10 +66,13 @@ public class CatalogController {
             @ApiParam(value = "Id of an offer to lookup for", required = true)
             @PathVariable long id) {
 
-        LOGGER.info("First log message");
+        LOGGER.info("Searching for an offer with id: " + id);
         Offer offer = offerService.findById(id);
-        if(offer == null) throw new EntityNotFoundException(Offer.class, id);
-        LOGGER.info("Last log message");
+        if(offer == null) {
+            LOGGER.info("Offer not found");
+            throw new EntityNotFoundException(Offer.class, id);
+        }
+        LOGGER.info("Found offer: " + offer);
         return offer;
     }
 
@@ -69,7 +85,10 @@ public class CatalogController {
     public Offer createOffer(
             @ApiParam(value = "Offer instance", required = true)
             @RequestBody Offer offer) {
-        return offerService.save(offer);
+        LOGGER.info("Saving offer: " + offer);
+        Offer savedOffer = offerService.save(offer);
+        LOGGER.info("Saved offer id: " + offer.getId());
+        return savedOffer;
     }
 
     @ApiOperation(
@@ -81,9 +100,13 @@ public class CatalogController {
     public Offer updatedOffer(
             @ApiParam(value = "Offer instance", required = true)
             @RequestBody Offer offer) {
-
+        LOGGER.info("Updating offer: " + offer);
         Offer updatedOffer = offerService.update(offer);
-        if(updatedOffer == null) throw new EntityNotUpdatedException(Offer.class, offer.getId());
+        if(updatedOffer == null) {
+            LOGGER.info("Can not update not existing offer");
+            throw new EntityNotUpdatedException(Offer.class, offer.getId());
+        }
+        LOGGER.info("Updated offer: " + offer);
         return updatedOffer;
     }
 
@@ -98,6 +121,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Category instance", required = true)
             @RequestBody Category category) {
+        LOGGER.info("New category: " + category + " for offer id: " + id );
         offerService.updateCategory(offerService.findById(id), category);
     }
 
@@ -112,6 +136,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
             @RequestBody Tag tag) {
+        LOGGER.info("New tag: " + tag + " for offer id: " + id );
         offerService.addTag(offerService.findById(id), tag);
     }
 
@@ -126,6 +151,7 @@ public class CatalogController {
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
             @RequestBody Tag tag) {
+        LOGGER.info("Removing tag: " + tag + " for offer id: " + id );
         offerService.deleteTag(offerService.findById(id), tag);
     }
 
@@ -135,7 +161,9 @@ public class CatalogController {
     public void deleteOffer(
             @ApiParam(value = "Id of an offer to delete", required = true)
             @PathVariable long id) {
+        LOGGER.info("Deleting offer with id: " + id);
         offerService.delete(id);
+        LOGGER.info("Offer deleted");
     }
 
     @ApiOperation(value = "Return offers filtered by parameters")
@@ -150,14 +178,24 @@ public class CatalogController {
             @RequestParam double minPrice,
             @ApiParam(value = "Max price")
             @RequestParam double maxPrice) {
-        return offerService.findByParams(categoryId, tagId, minPrice, maxPrice);
+        LOGGER.info("Search an offers by params. " +
+                "Category id: " + categoryId +
+                " | Tag id: " + tagId +
+                " | Min price: " + minPrice +
+                " | Max price: " + maxPrice);
+        Set<Offer> foundOffers = offerService.findByParams(categoryId, tagId, minPrice, maxPrice);
+        LOGGER.info("Found offers: " + foundOffers);
+        return foundOffers;
     }
 
     @ApiOperation(value = "Return all existing categories")
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Category> getAllCategories() {
-        return categoryService.findAll();
+        LOGGER.info("Search for all categories");
+        List<Category> foundCategories = categoryService.findAll();
+        LOGGER.info("Found categories: "  + foundCategories);
+        return foundCategories;
     }
 
     @ApiOperation(value = "Return category by id")
@@ -166,9 +204,13 @@ public class CatalogController {
     public Category getCategoryById(
             @ApiParam(value = "Id of a category to lookup for", required = true)
             @PathVariable long id) {
-
+        LOGGER.info("Searching for a category by id: " + id);
         Category category = categoryService.findById(id);
-        if(category == null) throw new EntityNotFoundException(Category.class, id);
+        if(category == null) {
+            LOGGER.info("Category not found");
+            throw new EntityNotFoundException(Category.class, id);
+        }
+        LOGGER.info("Found category: " + category);
         return category;
     }
 
@@ -181,7 +223,10 @@ public class CatalogController {
     public Category createCategory(
             @ApiParam(value = "Category instance")
             @RequestBody Category category) {
-        return categoryService.save(category);
+        LOGGER.info("Saving category: " + category);
+        Category savedCategory = categoryService.save(category);
+        LOGGER.info("Saved category: " + savedCategory + " with id: " + savedCategory.getId());
+        return savedCategory;
     }
 
     @ApiOperation(
@@ -193,9 +238,13 @@ public class CatalogController {
     public Category updatedCategory(
             @ApiParam(value = "Category instance")
             @RequestBody Category category) {
-
+        LOGGER.info("Updating category: " + category);
         Category updatedCategory = categoryService.update(category);
-        if(updatedCategory == null) throw new EntityNotUpdatedException(Category.class, category.getId());
+        if(updatedCategory == null) {
+            LOGGER.info("Can not update not existing category");
+            throw new EntityNotUpdatedException(Category.class, category.getId());
+        }
+        LOGGER.info("Updated category: " + updatedCategory);
         return updatedCategory;
     }
 
@@ -205,7 +254,9 @@ public class CatalogController {
     public void deleteCategory(
             @ApiParam(value = "Id of a category to delete", required = true)
             @PathVariable long id) {
+        LOGGER.info("Deleting category with id: " + id);
         categoryService.delete(id);
+        LOGGER.info("Category deleted");
     }
 
     @ApiOperation(
@@ -214,17 +265,22 @@ public class CatalogController {
     )
     @RequestMapping(value = "/categories/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCategory(
+    public void createCategories(
             @ApiParam(value = "List of categories", required = true)
             @RequestBody Set<Category> categories) {
+        LOGGER.info("Saving categories: " + categories);
         categoryService.saveAll(categories);
+        LOGGER.info("Categories saved");
     }
 
     @ApiOperation(value = "Return all existing tags")
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Tag> getAllTags() {
-        return tagService.findAll();
+        LOGGER.info("Search for all tags");
+        List<Tag> foundTags = tagService.findAll();
+        LOGGER.info("Found tags: "  + foundTags);
+        return foundTags;
     }
 
     @ApiOperation(value = "Return tag by id")
@@ -233,8 +289,13 @@ public class CatalogController {
     public Tag getTagById(
             @ApiParam(value = "Id of tag to lookup for", required = true)
             @PathVariable long id) {
+        LOGGER.info("Search for a tag with id: " + id);
         Tag tag = tagService.findById(id);
-        if(tag == null) throw new EntityNotFoundException(Tag.class, id);
+        if(tag == null) {
+            LOGGER.info("Tag not found");
+            throw new EntityNotFoundException(Tag.class, id);
+        }
+        LOGGER.info("Found tag: " + tag);
         return tag;
     }
 
@@ -247,8 +308,13 @@ public class CatalogController {
     public Tag updateTag(
             @ApiParam(value = "Tag instance")
             @RequestBody Tag tag) {
+        LOGGER.info("Updating tag: " + tag);
         Tag updatedTag = tagService.update(tag);
-        if(updatedTag == null) throw new EntityNotUpdatedException(Category.class, tag.getId());
+        if(updatedTag == null){
+            LOGGER.info("Can not update not existing tag");
+            throw new EntityNotUpdatedException(Category.class, tag.getId());
+        }
+        LOGGER.info("Updated tag: " + updatedTag);
         return updatedTag;
     }
 
@@ -258,7 +324,9 @@ public class CatalogController {
     public void deleteTag(
             @ApiParam(value = "Id of a tag to delete", required = true)
             @PathVariable long id) {
+        LOGGER.info("Deleting tag with id: " + id);
         tagService.delete(id);
+        LOGGER.info("Tag deleted");
     }
 
     @ApiOperation(
@@ -270,7 +338,10 @@ public class CatalogController {
     public Tag createTag(
             @ApiParam(value = "Tag instance")
             @RequestBody Tag tag) {
-        return tagService.save(tag);
+        LOGGER.info("Saving tag: " + tag);
+        Tag savedTag = tagService.save(tag);
+        LOGGER.info("Saved tag: " + tag + " with id: " + tag.getId());
+        return savedTag;
     }
 
     @ApiOperation(
@@ -279,9 +350,11 @@ public class CatalogController {
     )
     @RequestMapping(value = "/tags/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTag(
+    public void createTags(
             @ApiParam(value = "List of tags", required = true)
             @RequestBody Set<Tag> tags) {
+        LOGGER.info("Saving tags: " + tags);
         tagService.saveAll(tags);
+        LOGGER.info("Tags saved");
     }
 }

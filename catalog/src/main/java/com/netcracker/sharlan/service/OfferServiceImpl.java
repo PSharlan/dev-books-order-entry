@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -48,6 +50,25 @@ public class OfferServiceImpl implements OfferService {
             LOGGER.info("Offer not found");
         }
         return offer;
+    }
+
+    @Override
+    public List<Offer> findById(List<Integer> ids) {
+        LOGGER.info("Searching for offers by ids: " + ids);
+        Offer offer;
+        List<Offer> foundOfers = new ArrayList<>();
+        for (Integer id : ids) {
+            LOGGER.info("Searching for offer by id: " + id);
+            offer = offerDao.findById(id);
+            if(offer != null) {
+                LOGGER.info("Founded offer: " + offer);
+                offer.getTags().size();
+                foundOfers.add(offer);
+            }else{
+                LOGGER.info("Offer not found");
+            }
+        }
+        return foundOfers;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.netcracker.sharlan;
 
 import com.netcracker.sharlan.config.AppConfig;
+import com.netcracker.sharlan.entities.Role;
 import com.netcracker.sharlan.service.CustomerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +43,7 @@ public class CustomerServiceTest {
         addresses.add(new Address("Germany", "Frankfurt", "some street", 14));
 
         customer = new Customer("Customer Name","Customer Last Name",
-                "email@gmail.com", LocalDate.of(1990, 5, 20 ));
+                "email@gmail.com", "12345678", Role.ADMIN, new Date(1990, 5, 20 ));
 
     }
 
@@ -52,9 +54,9 @@ public class CustomerServiceTest {
 
     @Test
     public void findAllCustomers() {
-        Customer c1 = new Customer("Name10", "LastName10", "email10", LocalDate.of(1990, 5, 20 ));
-        Customer c2 = new Customer("Name20", "LastName20", "email20", LocalDate.of(1990, 5, 20 ));
-        Customer c3 = new Customer("Name30", "LastName30", "email30", LocalDate.of(1990, 5, 20 ));
+        Customer c1 = new Customer("Name10", "LastName10", "email10", "12345678", Role.ADMIN, new Date(1990, 5, 20 ));
+        Customer c2 = new Customer("Name20", "LastName20", "email20", "12345678", Role.USER, new Date(1990, 5, 20 ));
+        Customer c3 = new Customer("Name30", "LastName30", "email30", "12345678", Role.USER, new Date(1990, 5, 20 ));
 
         c1.addAddress(addresses);
         c2.addAddress(singleAddress);

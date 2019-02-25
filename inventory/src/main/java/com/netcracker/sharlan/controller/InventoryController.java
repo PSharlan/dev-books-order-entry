@@ -1,10 +1,14 @@
 package com.netcracker.sharlan.controller;
 
 import com.netcracker.sharlan.entities.Order;
+import com.netcracker.sharlan.exceptions.EntityNotFoundException;
+import com.netcracker.sharlan.exceptions.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +19,8 @@ import java.util.List;
 @RequestMapping("/api/v1/inventory")
 @Api(value = "/api/v1/inventory", description = "Manage customers inventory")
 public class InventoryController {
+
+    private static final Logger LOGGER = LogManager.getLogger(InventoryController.class.getName());
 
     @Autowired
     OrderService orderService;
@@ -28,14 +34,20 @@ public class InventoryController {
     public Order createOrder(
             @ApiParam(value = "Order instance", required = true)
             @RequestBody Order order) {
-        return orderService.save(order);
+        LOGGER.info("Saving order: " + order);
+        Order savedOrder = orderService.save(order);
+        LOGGER.info("Saved order: " + order + " with id: " + order.getId());
+        return savedOrder;
     }
 
     @ApiOperation(value = "Return all existing orders")
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Order> getAllOrders() {
-        return orderService.findAll();
+        LOGGER.info("Search for all orders");
+        List<Order> foundOrders = orderService.findAll();
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders;
     }
 
     @ApiOperation(value = "Return list of an orders by customer id")
@@ -44,7 +56,14 @@ public class InventoryController {
     public List<Order> getAllOrdersByCustomerId(
             @ApiParam(value = "Customer id", required = true)
             @PathVariable long customerId) {
-        return orderService.findByCustomerId(customerId);
+        LOGGER.info("Searching for orders by customer id: " + customerId);
+        List<Order> customerOrders = orderService.findByCustomerId(customerId);
+        if(customerOrders == null) {
+            LOGGER.info("Orders not found");
+            throw new EntityNotFoundException(Order.class, customerId);
+        }
+        LOGGER.info("Found orders: " + customerOrders);
+        return customerOrders;
     }
 
     @ApiOperation(value = "Return order by id")
@@ -53,7 +72,14 @@ public class InventoryController {
     public Order getOrderById(
             @ApiParam(value = "Id of an order to lookup for", required = true)
             @PathVariable long id) {
-        return orderService.findById(id);
+        LOGGER.info("Searching for an order by id: " + id);
+        Order foundOrder = orderService.findById(id);
+        if(foundOrder == null) {
+            LOGGER.info("Order not found");
+            throw new EntityNotFoundException(Order.class, id);
+        }
+        LOGGER.info("Found order: " + foundOrder);
+        return foundOrder;
     }
 
     @ApiOperation(
@@ -67,7 +93,10 @@ public class InventoryController {
             @PathVariable long customerId,
             @ApiParam(value = "Category name", required = true)
             @PathVariable String category) {
-        return orderService.findCustomerOrdersByCategory(customerId, category);
+        LOGGER.info("Searching for orders by category: " + category + " and customer id: " + customerId);
+        List<Order> foundOrdrs = orderService.findCustomerOrdersByCategory(customerId, category);
+        LOGGER.info("Found orders: " + foundOrdrs);
+        return foundOrdrs;
     }
 
     @ApiOperation(
@@ -79,7 +108,14 @@ public class InventoryController {
     public Order updatedOrder(
             @ApiParam(value = "Order instance", required = true)
             @RequestBody Order order) {
-        return orderService.save(order);
+        LOGGER.info("Updating order: " + order);
+        Order updatedOrder = orderService.update(order);
+        if(updatedOrder == null) {
+            LOGGER.info("Can not update not existing order");
+            throw new EntityNotUpdatedException(Order.class, order.getId());
+        }
+        LOGGER.info("Updated offer: " + order);
+        return updatedOrder;
     }
 
     @ApiOperation(value = "Delete order by id")
@@ -88,8 +124,8 @@ public class InventoryController {
     public void deleteOrder(
             @ApiParam(value = "Id of an order to delete", required = true)
             @PathVariable long id) {
+        LOGGER.info("Deleting order by id: " + id);
         orderService.delete(id);
+        LOGGER.info("Order deleted");
     }
-
-
 }

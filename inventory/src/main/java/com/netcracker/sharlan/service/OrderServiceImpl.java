@@ -3,16 +3,24 @@ package com.netcracker.sharlan.service;
 import com.netcracker.sharlan.dao.OrderDao;
 import com.netcracker.sharlan.entities.Order;
 import com.netcracker.sharlan.entities.OrderItem;
+import com.netcracker.sharlan.entities.OrderStatus;
+import com.netcracker.sharlan.entities.PaymentStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class.getName());
 
     private OrderDao orderDao;
 
@@ -23,33 +31,61 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order save(Order order) {
-        for (OrderItem orderItem : order.getItems()) {
-            orderItem.setOrder(order);
+        LOGGER.info("Saving order: " + order);
+        LOGGER.info("Order items: " + order.getItems());
+        order.setCreation(new Timestamp(new Date().getTime()));
+        order.setOrderStatus(OrderStatus.NEW);
+        order.setPaymentStatus(PaymentStatus.NONE);
+        order.addOrderItems(order.getItems());
+        LOGGER.info("Calculated order: " + order);
+        LOGGER.info("Order items: " + order.getItems());
+        Order savedOrder = orderDao.save(order);
+        return order;
+    }
+
+    @Override
+    public Order update(Order order) {
+        LOGGER.info("Updating order: " + order);
+        if(findById(order.getId()) == null) {
+            LOGGER.info("Offer not fond");
+            return null;
         }
-        return orderDao.save(order);
+        order.addOrderItems(order.getItems());
+        LOGGER.info("Calculated order: " + order);
+        Order savedOrder = orderDao.save(order);
+        return order;
     }
 
     @Override
     public List<Order> findAll() {
-        return orderDao.findAll();
+        LOGGER.info("Search for all orders");
+        List<Order> foundOrders = orderDao.findAll();
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders;
     }
 
     @Override
     public Order findById(long id) {
+        LOGGER.info("Searching for an order by id: " + id);
         Order order = orderDao.findById(id).orElse(null);
         if(order != null){
             order.getItems().size();
         }
+        LOGGER.info("Found order: " + order);
         return order;
     }
 
     @Override
     public List<Order> findByCustomerId(long customerId) {
-        return orderDao.findByCustomerId(customerId);
+        LOGGER.info("Searching for orders by customer id: " + customerId);
+        List<Order> foundOrders = orderDao.findByCustomerId(customerId);
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders;
     }
 
     @Override
     public List<Order> findCustomerOrdersByCategory(long customerId, String category) {
+        LOGGER.info("Finding orders by category: " + category + " and customer id: " + customerId);
         List<Order> allOrders = orderDao.findByCustomerId(customerId);
         List<Order> filteredOrders = new ArrayList<>();
         for (Order order: allOrders) {
@@ -60,16 +96,19 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
+        System.out.println("Found orders: " + filteredOrders);
         return filteredOrders;
     }
 
     @Override
     public void delete(Order order) {
+        LOGGER.info("Deleting order: " + order);
         orderDao.delete(order);
     }
 
     @Override
     public void delete(long id) {
+        LOGGER.info("Deleting order by id: " + id);
         orderDao.deleteById(id);
     }
 }

@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(long id) {
-        LOGGER.info("Searching for category by id: " + id);
+        LOGGER.info("Searching for a category by id: " + id);
         Category category = dao.findById(id);
         LOGGER.info("Found category : " + category);
         return category;

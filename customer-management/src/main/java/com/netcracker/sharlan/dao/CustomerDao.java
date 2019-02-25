@@ -8,6 +8,8 @@ public interface CustomerDao {
 
     Customer findById(long id);
 
+    Customer findByEmail(String email);
+
     Set<Customer> findAll();
 
     Set<Customer> findByName(String name);

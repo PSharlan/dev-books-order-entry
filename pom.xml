@@ -4,13 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId> com.netcracker.edu.sharlan</groupId>
+    <groupId>com.netcracker.edu.sharlan</groupId>
     <artifactId>order-entry </artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>catalog</module>
         <module>inventory</module>
         <module>customer-management</module>
+        <module>proc</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -99,6 +100,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

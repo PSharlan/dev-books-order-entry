@@ -63,15 +63,16 @@ public class Order extends BaseEntity{
     }
 
     public void addOrderItems(OrderItem item){
+        System.out.println("i am here 2");
         item.setOrder(this);
-        this.items.add(item);
         countItems();
     }
 
     public void addOrderItems(List<OrderItem> items){
         for (OrderItem item : items) {
-            addOrderItems(item);
+            item.setOrder(this);
         }
+        countItems();
     }
 
     public void removeOrderItems(OrderItem item){
@@ -86,6 +87,7 @@ public class Order extends BaseEntity{
     }
 
     private void countItems(){
+        System.out.println("i am here 3");
         int count = 0;
         double price = 0;
         for (OrderItem item : items) {
