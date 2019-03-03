@@ -86,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer update(Customer customer) {
         LOGGER.info("Updating customer : " + customer);
-        if(dao.findById(customer.getId()) == null){
+        if(customer.getId() == null || dao.findById(customer.getId()) == null){
             LOGGER.info("Customer with id : " + customer.getId() + " not found. Customer not updated");
             return null;
         }
@@ -104,6 +104,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void delete(long id) {
         LOGGER.info("Deleting customer by id: " + id);
-        dao.delete(id);
+        if(findById(id) != null) {
+            dao.delete(id);
+        } else {
+            LOGGER.info("Can not delete not existing customer");
+        }
     }
 }

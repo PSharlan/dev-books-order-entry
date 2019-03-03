@@ -3,9 +3,9 @@ package com.netcracker.sharlan.exceptions;
 public class EntityNotUpdatedException extends RuntimeException {
 
     private Class notUpdatedClass;
-    private long entityId;
+    private Long entityId;
 
-    public EntityNotUpdatedException(Class notFoundedClass, long entityId){
+    public EntityNotUpdatedException(Class notFoundedClass, Long entityId){
         this.entityId = entityId;
         this.notUpdatedClass = notFoundedClass;
     }
@@ -18,11 +18,11 @@ public class EntityNotUpdatedException extends RuntimeException {
         this.notUpdatedClass = notUpdatedClass;
     }
 
-    public long getEntityId() {
+    public Long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(long entityId) {
+    public void setEntityId(Long entityId) {
         this.entityId = entityId;
     }
 }

@@ -82,7 +82,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public Offer update(Offer offer) {
         LOGGER.info("Updating offer : " + offer);
-        if(offerDao.findById(offer.getId()) == null){
+        if(offer.getId() == null || offerDao.findById(offer.getId()) == null){
             LOGGER.info("Offer with id: " + offer.getId() + " not found. Offer not updated");
             return null;
         }

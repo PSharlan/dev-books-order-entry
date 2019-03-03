@@ -142,9 +142,13 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ EntityNotUpdatedException.class })
     public ResponseEntity<Object> handleEntityNotUpdated(EntityNotUpdatedException ex, WebRequest request) {
-
-        String message = ex.getNotUpdatedClass().getSimpleName() + " with id: "
-                + ex.getEntityId() + " not updated";
+        String message;
+        if(ex.getEntityId() == null){
+            message = ex.getNotUpdatedClass().getSimpleName() + " not updated";
+        } else {
+            message = ex.getNotUpdatedClass().getSimpleName() + " with id: "
+                    + ex.getEntityId() + " not updated";
+        }
 
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), message);

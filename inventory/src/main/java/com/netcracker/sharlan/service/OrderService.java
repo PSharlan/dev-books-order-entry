@@ -10,11 +10,15 @@ public interface OrderService {
 
     Order update(Order order);
 
+    Order updateStatus(long id, String status);
+
     List<Order> findAll();
 
     Order findById(long id);
 
     List<Order> findByCustomerId(long customerId);
+
+    List<Order> findOrdersByCategory(String category);
 
     List<Order> findCustomerOrdersByCategory(long customerId, String category);
 

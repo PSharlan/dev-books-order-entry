@@ -126,8 +126,13 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ EntityNotFoundException.class })
     public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
 
-        String message = ex.getNotFoundedClass().getSimpleName() + " with id: "
-                + ex.getEntityId() + " not found";
+        String message;
+        if(ex.getEntityId() == null){
+            message = ex.getNotFoundedClass().getSimpleName() + " not found";
+        } else {
+            message = ex.getNotFoundedClass().getSimpleName() + " with id: "
+                    + ex.getEntityId() + " not found";
+        }
 
         ApiError apiError = new ApiError(
                 HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), message);
@@ -137,9 +142,13 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ EntityNotUpdatedException.class })
     public ResponseEntity<Object> handleEntityNotUpdated(EntityNotUpdatedException ex, WebRequest request) {
-
-        String message = ex.getNotUpdatedClass().getSimpleName() + " with id: "
-                + ex.getEntityId() + " not updated";
+        String message;
+        if(ex.getEntityId() == null){
+            message = ex.getNotUpdatedClass().getSimpleName() + " not updated";
+        } else {
+            message = ex.getNotUpdatedClass().getSimpleName() + " with id: "
+                    + ex.getEntityId() + " not updated";
+        }
 
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), message);

@@ -55,8 +55,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public Tag update(Tag tag) {
         LOGGER.info("Updating Tag : " + tag);
-        Tag t = dao.findById(tag.getId());
-        if(t == null){
+        if(tag.getId() == null || dao.findById(tag.getId()) == null){
             LOGGER.info("Tag with id: " + tag.getId() + " not found. Tag not updated");
             return null;
         }

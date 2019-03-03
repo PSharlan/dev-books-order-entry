@@ -309,6 +309,7 @@ public class CatalogController {
             @ApiParam(value = "Tag instance")
             @RequestBody Tag tag) {
         LOGGER.info("Updating tag: " + tag);
+        LOGGER.info("Tag offers: " + tag.getOffers());
         Tag updatedTag = tagService.update(tag);
         if(updatedTag == null){
             LOGGER.info("Can not update not existing tag");

@@ -24,21 +24,19 @@ public class CustomerDaoImpl extends AbstractDao<Customer> implements CustomerDa
 
     @Override
     public Customer findByEmail(String email) {
+        Customer customer;
         String query = "select c from Customer c where c.email = :email";
         Query q = getEntityManager().createQuery(query);
         q.setParameter("email", email);
         Object o = null;
         try{
             o = q.getSingleResult();
-        }catch (Exception e){
-            System.out.println("ERRRRRRORRRRRRRR");
-        }
-        if(o != null){
-            Customer customer = (Customer) o;
+            customer = (Customer) o;
             return customer;
-        }else{
-            return null;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override

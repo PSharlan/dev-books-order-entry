@@ -59,8 +59,7 @@ public class ServiceTest {
 
     @AfterEach
     public void breakDown(){
-
-        offerService.delete(offer);
+        if(offer != null) offerService.delete(offer);
         for (Tag tag: tags) {
             tagService.delete(tag);
         }
@@ -70,6 +69,7 @@ public class ServiceTest {
 
     @Test
     public void findAllOffers(){
+        offerService.save(offer);
         Set<Offer> list = offerService.findAll();
         assertNotNull(list);
     }
@@ -100,13 +100,13 @@ public class ServiceTest {
         offerService.save(offer);
         long id = offer.getId();
         offerService.delete(offer);
+        offer = null;
         Offer deletedOffer = offerService.findById(id);
         assertNull(deletedOffer);
     }
 
     @Test
     public void findOffersByTag(){
-        offer.setTags(tags);
         offer = offerService.save(offer);
         tags = offer.getTags();
         for (Tag t: tags) {

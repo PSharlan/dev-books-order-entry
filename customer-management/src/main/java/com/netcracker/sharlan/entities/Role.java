@@ -18,7 +18,6 @@ public enum Role {
             case 0: return ADMIN;
             case 1: return USER;
             default: return null;
-
         }
     }
 }

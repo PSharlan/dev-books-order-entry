@@ -17,12 +17,7 @@ public class Tag extends BaseEntity {
     private String name;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "tag_offer",
-            joinColumns = { @JoinColumn(name = "tag_id") },
-            inverseJoinColumns = { @JoinColumn(name = "offer_id") }
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
     private Set<Offer> offers = new HashSet<Offer>();
 
     public Tag(String name){

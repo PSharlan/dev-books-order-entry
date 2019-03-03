@@ -34,11 +34,11 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("Saving order: " + order);
         LOGGER.info("Order items: " + order.getItems());
         order.setCreation(new Timestamp(new Date().getTime()));
-        order.setOrderStatus(OrderStatus.NEW);
-        order.setPaymentStatus(PaymentStatus.NONE);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setPaymentStatus(PaymentStatus.BILLED);
         order.addOrderItems(order.getItems());
-        LOGGER.info("Calculated order: " + order);
         LOGGER.info("Order items: " + order.getItems());
+        LOGGER.info("Calculated order: " + order);
         Order savedOrder = orderDao.save(order);
         return order;
     }
@@ -53,6 +53,26 @@ public class OrderServiceImpl implements OrderService {
         order.addOrderItems(order.getItems());
         LOGGER.info("Calculated order: " + order);
         Order savedOrder = orderDao.save(order);
+        return order;
+    }
+
+    @Override
+    public Order updateStatus(long id, String status) {
+        LOGGER.info("Updating order status. Order id: " + id + " | New status: " + status);
+        Order order = findById(id);
+        String st = status.toLowerCase();
+        if(st.equals("paid")){
+            order.setPaymentStatus(PaymentStatus.PAID);
+            order.setOrderStatus(OrderStatus.DELIVERY);
+        } else if (st.equals("canceled")){
+            order.setPaymentStatus(PaymentStatus.CANCELED);
+            order.setOrderStatus(OrderStatus.CANCELED);
+        } else if (st.equals("closed")){
+            order.setPaymentStatus(PaymentStatus.PAID);
+            order.setOrderStatus(OrderStatus.CLOSED);
+        }
+        order = update(order);
+        LOGGER.info("Status updated. Payment status: " + order.getPaymentStatus() + " | Order status: " + order.getOrderStatus());
         return order;
     }
 
@@ -81,6 +101,23 @@ public class OrderServiceImpl implements OrderService {
         List<Order> foundOrders = orderDao.findByCustomerId(customerId);
         LOGGER.info("Found orders: " + foundOrders);
         return foundOrders;
+    }
+
+    @Override
+    public List<Order> findOrdersByCategory(String category) {
+        LOGGER.info("Finding orders by category: " + category);
+        List<Order> allOrders = orderDao.findAll();
+        List<Order> filteredOrders = new ArrayList<>();
+        for (Order order: allOrders) {
+            for (OrderItem item : order.getItems()) {
+                if (item.getCategory().equals(category)){
+                    filteredOrders.add(order);
+                    break;
+                }
+            }
+        }
+        System.out.println("Found orders: " + filteredOrders);
+        return filteredOrders;
     }
 
     @Override

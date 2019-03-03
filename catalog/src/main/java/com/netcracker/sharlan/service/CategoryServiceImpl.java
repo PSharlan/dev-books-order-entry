@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category update(Category category) {
         LOGGER.info("Updating category : " + category);
-        if(dao.findById(category.getId()) == null){
+        if(category.getId() == null || dao.findById(category.getId()) == null){
             LOGGER.info("Category with id : " + category.getId() + " not found. Category not updated");
             return null;
         }

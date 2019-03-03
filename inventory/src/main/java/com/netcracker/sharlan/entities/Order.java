@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,15 +64,17 @@ public class Order extends BaseEntity{
     }
 
     public void addOrderItems(OrderItem item){
-        System.out.println("i am here 2");
         item.setOrder(this);
+        getItems().add(item);
         countItems();
     }
 
     public void addOrderItems(List<OrderItem> items){
+        System.out.println("ITEMS: " + items);
         for (OrderItem item : items) {
             item.setOrder(this);
         }
+        setItems(items);
         countItems();
     }
 
@@ -87,15 +90,17 @@ public class Order extends BaseEntity{
     }
 
     private void countItems(){
-        System.out.println("i am here 3");
         int count = 0;
         double price = 0;
-        for (OrderItem item : items) {
+        for (OrderItem item : this.items) {
             count++;
             price += item.getPrice();
         }
         this.itemsCount = count;
-        this.priceTotal = price;
+        DecimalFormat df = new DecimalFormat("#.##");
+        this.priceTotal = Double.valueOf(df.format(price));
+
+        System.out.println("price: " + price + " count " + count);
     }
 
     public long getCustomerId() {

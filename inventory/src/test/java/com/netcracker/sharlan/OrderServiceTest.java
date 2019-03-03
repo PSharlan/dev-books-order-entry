@@ -44,8 +44,10 @@ public class OrderServiceTest {
         items2.add(new OrderItem(2, "secondOffer", "some description", "category2", 222.2));
         items1.add(new OrderItem(15, "thirdOffer", "some description", "category1", 321.3));
 
-        order1 = new Order(3, PaymentStatus.BILLED, OrderStatus.PENDING, items1);
-        order2 = new Order(2, PaymentStatus.CANCELED, OrderStatus.CANCELED, items2);
+        order1 = new Order(3, PaymentStatus.BILLED, OrderStatus.PENDING);
+        order1.addOrderItems(items1);
+        order2 = new Order(2, PaymentStatus.CANCELED, OrderStatus.CANCELED);
+        order2.addOrderItems(items2);
     }
 
     @AfterEach
@@ -93,6 +95,9 @@ public class OrderServiceTest {
         int savedItemsAmount = savedOrder.getItemsCount();
         double savedPriceAmount = savedOrder.getPriceTotal();
 
+        System.out.println(savedPriceAmount);
+        System.out.println(savedItemsAmount);
+
         int i = 0;
         for (OrderItem item : items1) {
             item.setCategory("updated category");
@@ -105,6 +110,9 @@ public class OrderServiceTest {
         savedOrder.addOrderItems(items1);
 
         Order updatedOrder = orderService.save(savedOrder);
+
+        System.out.println(updatedOrder.getPriceTotal());
+        System.out.println(updatedOrder.getItemsCount());
 
         assertNotNull(updatedOrder.getItems());
         assertNotEquals(savedItemsAmount, updatedOrder.getItemsCount());

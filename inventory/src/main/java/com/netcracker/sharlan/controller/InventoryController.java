@@ -88,7 +88,7 @@ public class InventoryController {
     )
     @RequestMapping(value = "customers/{customerId}/orders/categories/{category}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Order> getOrdersByCategory(
+    public List<Order> getCustomerOrdersByCategory(
             @ApiParam(value = "Id of a customer to lookup for", required = true)
             @PathVariable long customerId,
             @ApiParam(value = "Category name", required = true)
@@ -99,6 +99,21 @@ public class InventoryController {
         return foundOrdrs;
     }
 
+    @ApiOperation(
+            value = "Return orders by category",
+            notes = "Required category name"
+    )
+    @RequestMapping(value = "orders/categories/{category}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public List<Order> getOrdersByCategory(
+            @ApiParam(value = "Category name", required = true)
+            @PathVariable String category) {
+        LOGGER.info("Searching for orders by category: " + category);
+        List<Order> foundOrdrs = orderService.findOrdersByCategory(category);
+        LOGGER.info("Found orders: " + foundOrdrs);
+        return foundOrdrs;
+    }
+    
     @ApiOperation(
             value = "Update order",
             notes = "Required order instance"
@@ -114,7 +129,28 @@ public class InventoryController {
             LOGGER.info("Can not update not existing order");
             throw new EntityNotUpdatedException(Order.class, order.getId());
         }
-        LOGGER.info("Updated offer: " + order);
+        LOGGER.info("Updated order: " + updatedOrder);
+        return updatedOrder;
+    }
+
+    @ApiOperation(
+            value = "Update order status",
+            notes = "Required order id and payment status"
+    )
+    @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public Order updatedOrderStatus(
+            @ApiParam(value = "Payment status", required = true)
+            @RequestBody String paymentStatus,
+            @ApiParam(value = "Order id", required = true)
+            @PathVariable long id) {
+        LOGGER.info("Updating order status. Order id: " + id + " | New payment status: " + paymentStatus);
+        Order updatedOrder = orderService.updateStatus(id, paymentStatus);
+        if(updatedOrder == null) {
+            LOGGER.info("Can not update not existing order or not existing status");
+            throw new EntityNotUpdatedException(Order.class, id);
+        }
+        LOGGER.info("Updated order: " + updatedOrder);
         return updatedOrder;
     }
 
