@@ -10,11 +10,11 @@
          each unit must have a unique name.
     -->
 
-    <persistence-unit name="customerPersistenceUnit">
-        <class>com.netcracker.sharlan.entities.Role</class>
-        <class>com.netcracker.sharlan.entities.Customer</class>
-        <class>com.netcracker.sharlan.entities.Address</class>
-
+    <persistence-unit name="inventoryPersistenceUnit">
+        <class>com.netcracker.sharlan.entities.Order</class>
+        <class>com.netcracker.sharlan.entities.OrderItem</class>
+        <class>com.netcracker.sharlan.entities.OrderStatus</class>
+        <class>com.netcracker.sharlan.entities.PaymentStatus</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
@@ -23,7 +23,8 @@
             <property name="javax.persistence.jdbc.password" value="1111"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.jdbc.lob.non_contextual_creation" value="true"/>
-            <property name="hibernate.default_schema" value="customer" />
-         </properties>
+            <property name="hibernate.default_schema" value="inventory" />
+
+        </properties>
     </persistence-unit>
 </persistence>

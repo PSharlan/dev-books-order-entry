@@ -123,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findCustomerOrdersByCategory(long customerId, String category) {
         LOGGER.info("Finding orders by category: " + category + " and customer id: " + customerId);
-        List<Order> allOrders = orderDao.findByCustomerId(customerId);
+        List<Order> allOrders = findByCustomerId(customerId);
         List<Order> filteredOrders = new ArrayList<>();
         for (Order order: allOrders) {
             for (OrderItem item : order.getItems()) {
