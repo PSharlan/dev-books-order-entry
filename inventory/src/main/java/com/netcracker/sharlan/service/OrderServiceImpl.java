@@ -1,10 +1,10 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.OrderDao;
-import com.netcracker.sharlan.entities.Order;
-import com.netcracker.sharlan.entities.OrderItem;
-import com.netcracker.sharlan.entities.OrderStatus;
-import com.netcracker.sharlan.entities.PaymentStatus;
+import com.netcracker.sharlan.entity.Order;
+import com.netcracker.sharlan.entity.OrderItem;
+import com.netcracker.sharlan.entity.OrderStatus;
+import com.netcracker.sharlan.entity.PaymentStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

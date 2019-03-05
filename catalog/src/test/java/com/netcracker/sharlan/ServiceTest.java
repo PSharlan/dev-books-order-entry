@@ -1,9 +1,9 @@
 package com.netcracker.sharlan;
 
 import com.netcracker.sharlan.config.AppConfig;
-import com.netcracker.sharlan.entities.Category;
-import com.netcracker.sharlan.entities.Offer;
-import com.netcracker.sharlan.entities.Tag;
+import com.netcracker.sharlan.entity.Category;
+import com.netcracker.sharlan.entity.Offer;
+import com.netcracker.sharlan.entity.Tag;
 import com.netcracker.sharlan.service.CategoryService;
 import com.netcracker.sharlan.service.OfferService;
 import com.netcracker.sharlan.service.TagService;

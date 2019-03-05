@@ -1,9 +1,9 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.OfferDao;
-import com.netcracker.sharlan.entities.Category;
-import com.netcracker.sharlan.entities.Offer;
-import com.netcracker.sharlan.entities.Tag;
+import com.netcracker.sharlan.entity.Category;
+import com.netcracker.sharlan.entity.Offer;
+import com.netcracker.sharlan.entity.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ public class OfferServiceImpl implements OfferService {
     public Set<Offer> findAll() {
         LOGGER.info("Searching for all offers");
         Set<Offer> set = offerDao.findAll();
-        LOGGER.info("Founded offers: " + set);
         return set;
     }
 

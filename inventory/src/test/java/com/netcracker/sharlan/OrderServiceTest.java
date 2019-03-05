@@ -1,10 +1,10 @@
 package com.netcracker.sharlan;
 
 import com.netcracker.sharlan.config.AppConfig;
-import com.netcracker.sharlan.entities.Order;
-import com.netcracker.sharlan.entities.OrderItem;
-import com.netcracker.sharlan.entities.OrderStatus;
-import com.netcracker.sharlan.entities.PaymentStatus;
+import com.netcracker.sharlan.entity.Order;
+import com.netcracker.sharlan.entity.OrderItem;
+import com.netcracker.sharlan.entity.OrderStatus;
+import com.netcracker.sharlan.entity.PaymentStatus;
 import com.netcracker.sharlan.service.OrderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
@@ -21,7 +22,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
+@TestPropertySource(locations="classpath:test.properties")
+@ContextConfiguration(classes = { AppConfig.class, InventoryApplication.class}, loader = AnnotationConfigContextLoader.class)
 public class OrderServiceTest {
 
     @Autowired

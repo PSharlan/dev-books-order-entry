@@ -11,9 +11,9 @@
     -->
 
     <persistence-unit name="catalogPersistenceUnit">
-        <class>com.netcracker.sharlan.entities.Offer</class>
-        <class>com.netcracker.sharlan.entities.Category</class>
-        <class>com.netcracker.sharlan.entities.Tag</class>
+        <class>com.netcracker.sharlan.entity.Offer</class>
+        <class>com.netcracker.sharlan.entity.Category</class>
+        <class>com.netcracker.sharlan.entity.Tag</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

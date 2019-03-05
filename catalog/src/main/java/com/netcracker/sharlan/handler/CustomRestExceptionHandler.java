@@ -1,7 +1,7 @@
 package com.netcracker.sharlan.handler;
 
-import com.netcracker.sharlan.exceptions.EntityNotFoundException;
-import com.netcracker.sharlan.exceptions.EntityNotUpdatedException;
+import com.netcracker.sharlan.exception.EntityNotFoundException;
+import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -157,7 +157,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-    //catch-all type of logic that deals with all other exceptions that don’t have specific handlers
+    //catch-all type of logic that deals with all other exception that don’t have specific handlers
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
 

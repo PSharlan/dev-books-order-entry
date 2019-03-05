@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.service;
 
-import com.netcracker.sharlan.entities.Order;
+import com.netcracker.sharlan.entity.Order;
 
 import java.util.List;
 

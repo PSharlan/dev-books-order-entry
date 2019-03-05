@@ -1,8 +1,8 @@
 package com.netcracker.sharlan.controller;
 
-import com.netcracker.sharlan.entities.Order;
-import com.netcracker.sharlan.exceptions.EntityNotFoundException;
-import com.netcracker.sharlan.exceptions.EntityNotUpdatedException;
+import com.netcracker.sharlan.entity.Order;
+import com.netcracker.sharlan.exception.EntityNotFoundException;
+import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

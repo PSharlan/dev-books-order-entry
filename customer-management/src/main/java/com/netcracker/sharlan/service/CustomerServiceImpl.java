@@ -75,6 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(Customer customer) {
         LOGGER.info("Saving customer : " + customer);
+        //customer.setPassword(HashUtil.stringToHash(customer.getPassword()));
         for (Address address: customer.getAddresses()) {
             address.setCustomer(customer);
         }

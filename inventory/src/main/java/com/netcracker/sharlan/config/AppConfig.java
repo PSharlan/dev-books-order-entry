@@ -1,16 +1,7 @@
 package com.netcracker.sharlan.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.context.annotation.*;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,34 +9,9 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableTransactionManagement
+@EnableJpaRepositories("com.netcracker.sharlan.dao")
 @ComponentScans(value = {@ComponentScan("com.netcracker.sharlan")})
 public class AppConfig {
-
-    @Bean
-    public LocalEntityManagerFactoryBean entityManagerFactory() {
-        LocalEntityManagerFactoryBean emf = new LocalEntityManagerFactoryBean();
-        emf.setPersistenceUnitName("inventoryPersistenceUnit");
-        return emf;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager tm = new JpaTransactionManager();
-        tm.setEntityManagerFactory(entityManagerFactory().getObject());
-        return tm;
-    }
-
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer addCustomBigDecimalDeserialization() {
-        return new Jackson2ObjectMapperBuilderCustomizer() {
-            @Override
-            public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
-                jacksonObjectMapperBuilder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                jacksonObjectMapperBuilder.modules(new Hibernate5Module());
-            }
-
-        };
-    }
 
     @Bean
     public CorsFilter corsFilter() {
@@ -57,8 +23,8 @@ public class AppConfig {
         config.addAllowedMethod("OPTIONS");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("PUT");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

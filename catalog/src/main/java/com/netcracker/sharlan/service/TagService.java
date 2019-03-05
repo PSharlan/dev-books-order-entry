@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.service;
 
-import com.netcracker.sharlan.entities.Tag;
+import com.netcracker.sharlan.entity.Tag;
 
 import java.util.List;
 import java.util.Set;

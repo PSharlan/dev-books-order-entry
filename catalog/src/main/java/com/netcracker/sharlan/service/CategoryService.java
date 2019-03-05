@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.service;
 
-import com.netcracker.sharlan.entities.Category;
+import com.netcracker.sharlan.entity.Category;
 
 import java.util.List;
 import java.util.Set;
