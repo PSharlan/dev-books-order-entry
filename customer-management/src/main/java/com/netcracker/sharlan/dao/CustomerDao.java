@@ -4,8 +4,20 @@ import com.netcracker.sharlan.entities.Customer;
 
 import java.util.Set;
 
+/**
+ * Root Data Access Object interface.
+ * Provides CRUD operations with {@link Customer} objects.
+ *
+ * @author Pavel Sharlan
+ */
 public interface CustomerDao {
 
+    /**
+     * Get a Customer by id.
+     *
+     * @param id
+     * @return {@link Customer}
+     */
     Customer findById(long id);
 
     Customer findByEmail(String email);
