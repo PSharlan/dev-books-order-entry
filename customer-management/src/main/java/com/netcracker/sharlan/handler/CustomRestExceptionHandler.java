@@ -1,5 +1,7 @@
 package com.netcracker.sharlan.handler;
 
+import com.netcracker.sharlan.exception.CustomerNotLoggedInException;
+import com.netcracker.sharlan.exception.EmailAlreadyExistException;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +27,6 @@ import java.util.List;
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
-
-    //fatal binding errors occur.
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
@@ -36,17 +36,19 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<String> errors = new ArrayList<String>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
+            errors.add(error.getField() + ": " +
+                    "" + error.getDefaultMessage());
         }
+
         for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+            errors.add(error.getObjectName() + ": "
+                    + error.getDefaultMessage());
         }
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
-    //missing request parameter
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(
             MissingServletRequestParameterException ex, HttpHeaders headers,
@@ -58,7 +60,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    //exception reports the result of constraint violations
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException ex,
@@ -87,7 +88,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    //unsupported HTTP method
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex,
@@ -97,14 +97,14 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getMethod());
-        builder.append(" method is not supported for this request. Supported methods are ");
+        builder.append(" method is not supported for " +
+                "this request. Supported methods are ");
         ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
 
         ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.getLocalizedMessage(), builder.toString());
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    //request with unsupported media type
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
             HttpMediaTypeNotSupportedException ex,
@@ -114,7 +114,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getContentType());
-        builder.append(" media type is not supported. Supported media types are ");
+        builder.append(" media type is not supported. " +
+                "Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + ", "));
 
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
@@ -122,12 +123,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-
     @ExceptionHandler({ EntityNotFoundException.class })
     public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
-
         String message;
-        if(ex.getEntityId() != 0) {
+        if(ex.getEntityId() != null) {
             message = ex.getNotFoundedClass().getSimpleName() + " with id: "
                     + ex.getEntityId() + " not found";
         }else{
@@ -156,6 +155,27 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    @ExceptionHandler({ CustomerNotLoggedInException.class })
+    public ResponseEntity<Object> handleCustomerNotLoggedIn(CustomerNotLoggedInException ex, WebRequest request) {
+        String message = "Customer with email: "
+                    + ex.getCustomerEmail() + " not logged in. Email or password is invalid.";
+
+        ApiError apiError = new ApiError(
+                HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), message);
+        return new ResponseEntity<Object>(
+                apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({ EmailAlreadyExistException.class })
+    public ResponseEntity<Object> handleEmailAlreadyExist(EmailAlreadyExistException ex, WebRequest request) {
+        String message = "Customer with email: "
+                + ex.getCustomerEmail() + " already exist.";
+
+        ApiError apiError = new ApiError(
+                HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), message);
+        return new ResponseEntity<Object>(
+                apiError, new HttpHeaders(), apiError.getStatus());
+    }
 
     //catch-all type of logic that deals with all other exception that don’t have specific handlers
     @ExceptionHandler({ Exception.class })

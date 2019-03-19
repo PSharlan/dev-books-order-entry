@@ -2,10 +2,27 @@ package com.netcracker.sharlan.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.*;
 
+/**
+ * Represents a Customer, providing access to the customers id, role,
+ * name, last name, email, password, date of birth and associated addresses.
+ *
+ * @see BaseEntity
+ * @see Address
+ * @see Role
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "customer")
 public class Customer extends BaseEntity{
@@ -35,13 +52,15 @@ public class Customer extends BaseEntity{
     private Set<Address> addresses = new HashSet<>();
 
     /**
-     * case: for frameworks
+     * Constructs a new Customer with name, last name, email, password, role and date of birth.
+     *
+     * @param name
+     * @param lastName
+     * @param email
+     * @param password
+     * @param role
+     * @param dateOfBirth
      */
-    public Customer(){
-
-    }
-
-
     public Customer(String name, String lastName, String email, String password, Role role, Date dateOfBirth) {
         this.name = name;
         this.lastName = lastName;
@@ -51,82 +70,45 @@ public class Customer extends BaseEntity{
         this.dateOfBirth = dateOfBirth;
     }
 
+    /**
+     * Adds single address to customer.
+     *
+     * @param address
+     */
     public void addAddress(Address address){
         address.setCustomer(this);
         addresses.add(address);
     }
 
+    /**
+     * Adds set of new addresses to customer.
+     *
+     * @param addresses
+     */
     public void addAddress(Set<Address> addresses){
         for (Address a : addresses) {
             addAddress(a);
         }
     }
 
+    /**
+     * Deletes single address from customer.
+     *
+     * @param address
+     */
     public void removeAddress(Address address){
         addresses.remove(address);
     }
 
+    /**
+     * Deletes set of addresses from customer.
+     *
+     * @param addresses
+     */
     public void removeAddress(Set<Address> addresses){
         for (Address a : addresses) {
             removeAddress(a);
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Set<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(Set<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override

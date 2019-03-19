@@ -1,18 +1,19 @@
 package com.netcracker.sharlan;
 
-import com.netcracker.sharlan.config.AppConfig;
-import com.netcracker.sharlan.entity.Category;
-import com.netcracker.sharlan.entity.Offer;
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.config.TestConfig;
+import com.netcracker.sharlan.entities.Category;
+import com.netcracker.sharlan.entities.Offer;
+import com.netcracker.sharlan.entities.Tag;
 import com.netcracker.sharlan.service.CategoryService;
 import com.netcracker.sharlan.service.OfferService;
 import com.netcracker.sharlan.service.TagService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
@@ -25,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { AppConfig.class }, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = { TestConfig.class }, loader = AnnotationConfigContextLoader.class)
+@SqlConfig(dataSource = "pgTestDataSource")
+@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class ServiceTest {
 
     @Autowired
@@ -41,6 +45,7 @@ public class ServiceTest {
     private Tag tag2;
     private Set<Tag> tags;
 
+
     @BeforeEach
     public void setUp() {
         category = new Category("TEST_CATEGORY");
@@ -53,19 +58,8 @@ public class ServiceTest {
         tags.add(tag2);
         tagService.saveAll(tags);
 
-        offer = new Offer("TEST_OFFER", "testOfferDescription", category, 222.22);
-        offer.setTags(tags);
+        offer = new Offer("TEST_OFFER", "testOfferDescription", 222.22, category, tags);
     }
-
-    @AfterEach
-    public void breakDown(){
-        if(offer != null) offerService.delete(offer);
-        for (Tag tag: tags) {
-            tagService.delete(tag);
-        }
-        categoryService.delete(category);
-    }
-
 
     @Test
     public void findAllOffers(){

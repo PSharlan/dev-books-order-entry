@@ -1,51 +1,24 @@
 package com.netcracker.sharlan.dto.customer;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
-public class UserDto {
+@Getter
+@Setter
+public class CustomerDto {
 
     private Long id;
     private String name;
     private String lastName;
     private String email;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserDto)) return false;
-        UserDto userDto = (UserDto) o;
+        if (!(o instanceof CustomerDto)) return false;
+        CustomerDto userDto = (CustomerDto) o;
         return Objects.equals(id, userDto.id) &&
                 Objects.equals(name, userDto.name) &&
                 Objects.equals(lastName, userDto.lastName) &&
@@ -59,7 +32,7 @@ public class UserDto {
 
     @Override
     public String toString() {
-        return "UserDto{" +
+        return "CustomerDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +

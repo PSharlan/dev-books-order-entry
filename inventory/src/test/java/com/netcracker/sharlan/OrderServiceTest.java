@@ -1,10 +1,10 @@
 package com.netcracker.sharlan;
 
 import com.netcracker.sharlan.config.AppConfig;
-import com.netcracker.sharlan.entity.Order;
-import com.netcracker.sharlan.entity.OrderItem;
-import com.netcracker.sharlan.entity.OrderStatus;
-import com.netcracker.sharlan.entity.PaymentStatus;
+import com.netcracker.sharlan.entities.Order;
+import com.netcracker.sharlan.entities.OrderItem;
+import com.netcracker.sharlan.entities.OrderStatus;
+import com.netcracker.sharlan.entities.PaymentStatus;
 import com.netcracker.sharlan.service.OrderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
@@ -24,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations="classpath:test.properties")
 @ContextConfiguration(classes = { AppConfig.class, InventoryApplication.class}, loader = AnnotationConfigContextLoader.class)
+@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class OrderServiceTest {
 
     @Autowired
@@ -52,11 +55,6 @@ public class OrderServiceTest {
         order2.addOrderItems(items2);
     }
 
-    @AfterEach
-    public void breakDown(){
-        orderService.delete(order1);
-    }
-
     @Test
     public void findAllOrders() {
         Order savedOrder1 = orderService.save(order1);
@@ -64,9 +62,6 @@ public class OrderServiceTest {
         List<Order> foundOrders = orderService.findAll();
 
         assertNotNull(foundOrders);
-
-        orderService.delete(savedOrder1);
-        orderService.delete(savedOrder2);
     }
 
     @Test
@@ -97,9 +92,6 @@ public class OrderServiceTest {
         int savedItemsAmount = savedOrder.getItemsCount();
         double savedPriceAmount = savedOrder.getPriceTotal();
 
-        System.out.println(savedPriceAmount);
-        System.out.println(savedItemsAmount);
-
         int i = 0;
         for (OrderItem item : items1) {
             item.setCategory("updated category");
@@ -113,15 +105,9 @@ public class OrderServiceTest {
 
         Order updatedOrder = orderService.save(savedOrder);
 
-        System.out.println(updatedOrder.getPriceTotal());
-        System.out.println(updatedOrder.getItemsCount());
-
         assertNotNull(updatedOrder.getItems());
         assertNotEquals(savedItemsAmount, updatedOrder.getItemsCount());
         assertNotEquals(savedPriceAmount, updatedOrder.getPriceTotal());
-
-        //order items need to be initialized before deleting
-        order1 = orderService.findById(savedOrder.getId());
     }
 
     @Test

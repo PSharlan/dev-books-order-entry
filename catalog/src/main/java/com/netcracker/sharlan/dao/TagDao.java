@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.entities.Tag;
 
 import java.util.List;
 import java.util.Set;

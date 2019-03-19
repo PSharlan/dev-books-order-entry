@@ -1,7 +1,7 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.TagDao;
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.entities.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

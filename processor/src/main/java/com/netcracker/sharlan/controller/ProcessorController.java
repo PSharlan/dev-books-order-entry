@@ -1,10 +1,10 @@
 package com.netcracker.sharlan.controller;
 
 import com.netcracker.sharlan.dto.catalog.OfferDto;
-import com.netcracker.sharlan.dto.customer.UserDto;
+import com.netcracker.sharlan.dto.customer.CustomerDto;
 import com.netcracker.sharlan.dto.inventory.OrderDto;
 import com.netcracker.sharlan.dto.inventory.OrderItemDto;
-import com.netcracker.sharlan.services.ProcessorService;
+import com.netcracker.sharlan.service.ProcessorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -139,8 +139,8 @@ public class ProcessorController {
 
         //get user id from customer-module
         UriComponentsBuilder customerUriBuilder = UriComponentsBuilder.fromHttpUrl(customerUrl + "/email/" + email);
-        UserDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
-                HttpMethod.GET, null, new ParameterizedTypeReference<UserDto>() {
+        CustomerDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<CustomerDto>() {
                 }).getBody();
         Long userId = user.getId();
 
@@ -171,8 +171,8 @@ public class ProcessorController {
 
         //get user id from customer-module
         UriComponentsBuilder customerUriBuilder = UriComponentsBuilder.fromHttpUrl(customerUrl + "/email/" + email);
-        UserDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
-                HttpMethod.GET, null, new ParameterizedTypeReference<UserDto>() {
+        CustomerDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<CustomerDto>() {
                 }).getBody();
         Long userId = user.getId();
 
@@ -205,8 +205,8 @@ public class ProcessorController {
 
         //get user id from customer-module
         UriComponentsBuilder customerUriBuilder = UriComponentsBuilder.fromHttpUrl(customerUrl + "/email/" + email);
-        UserDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
-                HttpMethod.GET, null, new ParameterizedTypeReference<UserDto>() {
+        CustomerDto user = restTemplate.exchange(customerUriBuilder.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<CustomerDto>() {
                 }).getBody();
         Long userId = user.getId();
 

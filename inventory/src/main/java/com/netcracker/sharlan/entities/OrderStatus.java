@@ -1,5 +1,13 @@
-package com.netcracker.sharlan.entity;
+package com.netcracker.sharlan.entities;
 
+/**
+ * Represents an Order status.
+ *
+ * @see Order
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
 public enum OrderStatus {
     NEW(0), PENDING(1), DELIVERY(2), CLOSED(3), CANCELED(10);
 

@@ -1,6 +1,6 @@
 package com.netcracker.sharlan.dao;
 
-import com.netcracker.sharlan.entity.Category;
+import com.netcracker.sharlan.entities.Category;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

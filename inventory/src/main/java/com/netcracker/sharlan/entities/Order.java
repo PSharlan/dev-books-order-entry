@@ -1,5 +1,8 @@
-package com.netcracker.sharlan.entity;
+package com.netcracker.sharlan.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -8,6 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents an Order, providing access to the orders id, customer id,
+ * items count, total price, list of order items, payment and order status, creation and closing time.
+ *
+ * @see BaseEntity
+ * @see OrderItem
+ * @see OrderStatus
+ * @see PaymentStatus
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="`order`")
 public class Order extends BaseEntity{
@@ -40,13 +58,12 @@ public class Order extends BaseEntity{
     private List<OrderItem> items = new ArrayList<>();
 
     /**
-     * case: for frameworks
-     */
-    public Order(){}
-
-    /**
-     * case: creation of new Order without order items.
+     * Constructs a new Order without order items.
      * ItemsAmount: 0, PriceAmount: 0.0
+     *
+     * @param customerId
+     * @param paymentStatus
+     * @param orderStatus
      */
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus) {
         this.customerId = customerId;
@@ -55,20 +72,35 @@ public class Order extends BaseEntity{
     }
 
     /**
-     * case: creation of new Order with order items.
+     * Constructs a new Order with order items.
      * ItemsAmount and PriceAmount will be calculated.
+     *
+     * @param customerId
+     * @param paymentStatus
+     * @param orderStatus
+     * @param items
      */
     public Order(int customerId, PaymentStatus paymentStatus, OrderStatus orderStatus, List<OrderItem> items) {
         this(customerId, paymentStatus, orderStatus);
         addOrderItems(items);
     }
 
+    /**
+     * Adds item to order and recalculates it.
+     *
+     * @param item - item to add
+     */
     public void addOrderItems(OrderItem item){
         item.setOrder(this);
         getItems().add(item);
         countItems();
     }
 
+    /**
+     * Adds list of items to order and recalculates it.
+     *
+     * @param items - item to add
+     */
     public void addOrderItems(List<OrderItem> items){
         System.out.println("ITEMS: " + items);
         for (OrderItem item : items) {
@@ -78,11 +110,21 @@ public class Order extends BaseEntity{
         countItems();
     }
 
+    /**
+     * Deletes item from order and recalculates it.
+     *
+     * @param item - item to add
+     */
     public void removeOrderItems(OrderItem item){
         this.items.remove(item);
         countItems();
     }
 
+    /**
+     * Deletes list of items from order and recalculates it.
+     *
+     * @param items - item to add
+     */
     public void removeOrderItems(List<OrderItem> items){
         for (OrderItem item : items) {
             removeOrderItems(item);
@@ -99,72 +141,6 @@ public class Order extends BaseEntity{
         this.itemsCount = count;
         DecimalFormat df = new DecimalFormat("#.##");
         this.priceTotal = Double.valueOf(df.format(price));
-
-        System.out.println("price: " + price + " count " + count);
-    }
-
-    public long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(long customerId) {
-        this.customerId = customerId;
-    }
-
-    public int getItemsCount() {
-        return itemsCount;
-    }
-
-    public void setItemsCount(int itemsAmount) {
-        this.itemsCount = itemsAmount;
-    }
-
-    public double getPriceTotal() {
-        return priceTotal;
-    }
-
-    public void setPriceTotal(double priceAmount) {
-        this.priceTotal = priceAmount;
-    }
-
-    public PaymentStatus getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public Timestamp getCreation() {
-        return creation;
-    }
-
-    public void setCreation(Timestamp creationTS) {
-        this.creation = creationTS;
-    }
-
-    public Timestamp getClosing() {
-        return closing;
-    }
-
-    public void setClosing(Timestamp closingTS) {
-        this.closing = closingTS;
-    }
-
-    public List<OrderItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
     }
 
     @Override
@@ -181,7 +157,7 @@ public class Order extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, itemsCount, priceTotal, paymentStatus, orderStatus, items);
+        return Objects.hash(customerId, itemsCount, priceTotal, paymentStatus, orderStatus);
     }
 
     @Override

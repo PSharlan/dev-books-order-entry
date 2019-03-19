@@ -2,6 +2,7 @@ package com.netcracker.sharlan.dao;
 
 import com.netcracker.sharlan.entities.Customer;
 
+import javax.persistence.NoResultException;
 import java.util.Set;
 
 /**

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@SqlConfig(dataSource = "pgTestDataSource")
+@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class CustomerControllerTest {
 
     @Autowired
@@ -85,14 +90,14 @@ public class CustomerControllerTest {
     public void createNewCustomerAndDelete() throws Exception {
         this.mockMvc.perform(post("/api/v1/customers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"role\":\"USER\",\"name\":\"TestName\",\"lastName\":\"TestLastName\",\"email\":\"test@email\",\"password\":\"1234\",\"dateOfBirth\":\"2018-11-27\"}"))
+                .content("{\"role\":\"USER\",\"name\":\"TestName\",\"lastName\":\"TestLastName\",\"email\":\"test@email.com\",\"password\":\"12345678\",\"dateOfBirth\":\"2018-11-27\"}"))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("TestName")))
                 .andExpect(content().string(containsString("TestLastName")))
                 .andExpect(content().string(containsString("USER")));
 
-        MvcResult result = this.mockMvc.perform(get("/api/v1/customers/email/test@email"))
+        MvcResult result = this.mockMvc.perform(get("/api/v1/customers/email/test@email.com"))
                 .andReturn();
         String foundStr = result.getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();

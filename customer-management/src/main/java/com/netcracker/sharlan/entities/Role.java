@@ -1,5 +1,13 @@
 package com.netcracker.sharlan.entities;
 
+/**
+ * Represents a customer Role.
+ *
+ * @see Customer
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
 public enum Role {
     ADMIN(0), USER(1);
 

@@ -1,9 +1,14 @@
 package com.netcracker.sharlan.dto.inventory;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class OrderDto {
 
     private Long id;
@@ -33,78 +38,6 @@ public class OrderDto {
         this.itemsCount = itemsCount;
         this.priceTotal = priceTotal;
         this.closing = closing;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public int getItemsCount() {
-        return itemsCount;
-    }
-
-    public void setItemsCount(int itemsCount) {
-        this.itemsCount = itemsCount;
-    }
-
-    public double getPriceTotal() {
-        return priceTotal;
-    }
-
-    public void setPriceTotal(double priceTotal) {
-        this.priceTotal = priceTotal;
-    }
-
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public Timestamp getCreation() {
-        return creation;
-    }
-
-    public void setCreation(Timestamp creation) {
-        this.creation = creation;
-    }
-
-    public Timestamp getClosing() {
-        return closing;
-    }
-
-    public void setClosing(Timestamp closing) {
-        this.closing = closing;
-    }
-
-    public List<OrderItemDto> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItemDto> items) {
-        this.items = items;
     }
 
     @Override

@@ -1,5 +1,13 @@
-package com.netcracker.sharlan.entity;
+package com.netcracker.sharlan.entities;
 
+/**
+ * Represents a Order payment status.
+ *
+ * @see Order
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
 public enum PaymentStatus {
     NONE(0), BILLED(1), PAID(2), CANCELED(10);
 

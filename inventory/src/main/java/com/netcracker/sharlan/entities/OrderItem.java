@@ -1,10 +1,27 @@
-package com.netcracker.sharlan.entity;
+package com.netcracker.sharlan.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Represents an Order, providing access to the items id, order id, offer id,
+ * name, description, category and price.
+ * Order item have to be associated with Order.
+ *
+ * @see BaseEntity
+ * @see Order
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="order_item")
 public class OrderItem extends BaseEntity{
@@ -15,7 +32,7 @@ public class OrderItem extends BaseEntity{
     private Order order;
 
     @Column(name="offer_id")
-    private int offerId;
+    private long offerId;
 
     @Column(name="name")
     private String name;
@@ -30,71 +47,21 @@ public class OrderItem extends BaseEntity{
     private double price;
 
 
+    /**
+     * Constructs a new Order item without association with an Order.
+     * Binding Orders and their Items implements by Offer side.
+     *
+     * @param offerId
+     * @param name
+     * @param description
+     * @param category
+     * @param price
+     */
     public OrderItem(int offerId, String name, String description, String category, double price) {
         this.offerId = offerId;
         this.name = name;
         this.description = description;
         this.category = category;
-        this.price = price;
-    }
-
-    public OrderItem(Order order, int offerId, String name, String description, String category, double price) {
-        this(offerId, name, description, category, price);
-        this.order = order;
-    }
-
-    /**
-     * case: for frameworks
-     */
-    public OrderItem(){
-
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public int getOfferId() {
-        return offerId;
-    }
-
-    public void setOfferId(int offerId) {
-        this.offerId = offerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
         this.price = price;
     }
 

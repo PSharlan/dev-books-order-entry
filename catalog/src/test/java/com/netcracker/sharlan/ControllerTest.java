@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,13 +25,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//@Sql(value = {"drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@SqlConfig(dataSource = "pgTestDataSource")
+@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class ControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    //OFFERS
     @Test
     public void getAllOffers() throws Exception {
         this.mockMvc.perform(get("/api/v1/catalog/offers"))
@@ -137,6 +141,7 @@ public class ControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    //CATEGORIES
     @Test
     public void getAllCategories() throws Exception {
         this.mockMvc.perform(get("/api/v1/catalog/categories"))
@@ -225,7 +230,6 @@ public class ControllerTest {
     }
 
     //TAGS
-
     @Test
     public void getAllTags() throws Exception {
         this.mockMvc.perform(get("/api/v1/catalog/tags"))

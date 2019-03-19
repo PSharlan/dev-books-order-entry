@@ -1,10 +1,10 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.OrderDao;
-import com.netcracker.sharlan.entity.Order;
-import com.netcracker.sharlan.entity.OrderItem;
-import com.netcracker.sharlan.entity.OrderStatus;
-import com.netcracker.sharlan.entity.PaymentStatus;
+import com.netcracker.sharlan.entities.Order;
+import com.netcracker.sharlan.entities.OrderItem;
+import com.netcracker.sharlan.entities.OrderStatus;
+import com.netcracker.sharlan.entities.PaymentStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
     public Order updateStatus(long id, String status) {
         LOGGER.info("Updating order status. Order id: " + id + " | New status: " + status);
         Order order = findById(id);
+        if (order == null) return null;
         String st = status.toLowerCase();
         if(st.equals("paid")){
             order.setPaymentStatus(PaymentStatus.PAID);
@@ -67,10 +68,12 @@ public class OrderServiceImpl implements OrderService {
         } else if (st.equals("canceled")){
             order.setPaymentStatus(PaymentStatus.CANCELED);
             order.setOrderStatus(OrderStatus.CANCELED);
+            order.setClosing(new Timestamp(new Date().getTime()));
         } else if (st.equals("closed")){
             order.setPaymentStatus(PaymentStatus.PAID);
             order.setOrderStatus(OrderStatus.CLOSED);
-        }
+            order.setClosing(new Timestamp(new Date().getTime()));
+        } else return null;
         order = update(order);
         LOGGER.info("Status updated. Payment status: " + order.getPaymentStatus() + " | Order status: " + order.getOrderStatus());
         return order;

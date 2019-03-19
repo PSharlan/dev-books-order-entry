@@ -1,6 +1,9 @@
 package com.netcracker.sharlan.controller;
 
+import com.netcracker.sharlan.dto.CustomerDto;
 import com.netcracker.sharlan.entities.Customer;
+import com.netcracker.sharlan.exception.CustomerNotLoggedInException;
+import com.netcracker.sharlan.exception.EmailAlreadyExistException;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.CustomerService;
@@ -9,11 +12,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/customers")
@@ -22,8 +28,14 @@ public class CustomerController {
 
     private static final Logger LOGGER = LogManager.getLogger(CustomerController.class.getName());
 
+    private CustomerService customerService;
+    private ModelMapper modelMapper;
+
     @Autowired
-    CustomerService customerService;
+    public CustomerController(CustomerService customerService, ModelMapper modelMapper){
+        this.customerService = customerService;
+        this.modelMapper = modelMapper;
+    }
 
     @ApiOperation(
             value = "Create customer",
@@ -31,29 +43,36 @@ public class CustomerController {
     )
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer create(
+    public CustomerDto create(
             @ApiParam(value = "Customer instance", required = true)
-            @RequestBody Customer customer) {
+            @Valid @RequestBody CustomerDto customer) {
         LOGGER.info("Saving customer: " + customer);
-        Customer savedCustomer = customerService.save(customer);
+        Customer customerEntity = convertToEntity(customer);
+        Customer savedCustomer = customerService.save(customerEntity);
+        if(savedCustomer == null) {
+            LOGGER.info("Email " + customerEntity.getEmail() + " already exist");
+            throw new EmailAlreadyExistException(customerEntity.getEmail());
+        }
         LOGGER.info("Saved customer: " + savedCustomer + " with id: " + savedCustomer.getId());
-        return savedCustomer;
+        return convertToDto(savedCustomer);
     }
 
     @ApiOperation(value = "Return all existing customers")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Set<Customer> getAllCustomers() {
+    public Set<CustomerDto> getAllCustomers() {
         LOGGER.info("Searching for all customers");
         Set<Customer> foundCustomers = customerService.findAll();
         LOGGER.info("Found customers: " + foundCustomers);
-        return foundCustomers;
+        return foundCustomers.stream()
+                .map(customer -> convertToDto(customer))
+                .collect(Collectors.toSet());
     }
 
     @ApiOperation(value = "Return customer by id")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Customer getCustomerById(
+    public CustomerDto getCustomerById(
             @ApiParam(value = "Id of a customer to lookup for", required = true)
             @PathVariable long id) {
         LOGGER.info("Searching for a customer by id: " + id);
@@ -63,13 +82,13 @@ public class CustomerController {
             throw new EntityNotFoundException(Customer.class, id);
         }
         LOGGER.info("Found customer: " + foundCustomer);
-        return foundCustomer;
+        return convertToDto(foundCustomer);
     }
 
     @ApiOperation(value = "Return customer by email")
     @RequestMapping(value = "/email/{email}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Customer getCustomerByEmail(
+    public CustomerDto getCustomerByEmail(
             @ApiParam(value = "Customer email", required = true)
             @PathVariable String email) {
         LOGGER.info("Searching for a customer by email: " + email);
@@ -79,7 +98,7 @@ public class CustomerController {
             throw new EntityNotFoundException(Customer.class, email);
         }
         LOGGER.info("Found customer: " + foundCustomer);
-        return foundCustomer;
+        return convertToDto(foundCustomer);
     }
 
     @ApiOperation(
@@ -88,17 +107,18 @@ public class CustomerController {
     )
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Customer updatedCustomer(
+    public CustomerDto updatedCustomer(
             @ApiParam(value = "Customer instance", required = true)
-            @RequestBody Customer customer) {
-        LOGGER.info("Updating customer: " + customer);
+            @Valid @RequestBody CustomerDto customerDto) {
+        LOGGER.info("Updating customer: " + customerDto);
+        Customer customer = convertToEntity(customerDto);
         Customer updatedCustomer = customerService.update(customer);
         if(updatedCustomer == null) {
             LOGGER.info("Can not update not existing customer");
             throw new EntityNotUpdatedException(Customer.class, customer.getId());
         }
         LOGGER.info("Updated customer: " + updatedCustomer);
-        return updatedCustomer;
+        return convertToDto(updatedCustomer);
     }
 
     @ApiOperation(value = "Delete customer by id")
@@ -110,6 +130,84 @@ public class CustomerController {
         LOGGER.info("Deleting customer by id: " + id);
         customerService.delete(id);
         LOGGER.info("Customer deleted");
+    }
+
+    @ApiOperation(
+            value = "Check customer password",
+            notes = "Customer email and password are required. " +
+                    "Throws 400 error if email or password is not valid."
+    )
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDto login(
+            @ApiParam(value = "Customer email")
+            @RequestParam String email,
+            @ApiParam(value = "Customer password")
+            @RequestParam String password) {
+        LOGGER.info("Inserted email: " + email);
+        LOGGER.info("Inserted password: " + password);
+        Customer customer = customerService.loginCustomer(email, password);
+        if(customer == null) {
+            throw new CustomerNotLoggedInException(email);
+        }
+        return convertToDto(customer);
+    }
+
+    @ApiOperation(
+            value = "Check customer password",
+            notes = "Customer email, old and new passwords are required. " +
+                    "Throws 400 error if email or password is not valid."
+    )
+    @RequestMapping(value = "/newpassword", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDto changePassword(
+            @ApiParam(value = "Customer email")
+            @RequestParam String email,
+            @ApiParam(value = "Old password")
+            @RequestParam String oldPassword,
+            @ApiParam(value = "New password", required = true)
+            @RequestBody String newPassword) {
+        LOGGER.info("Inserted email: " + email);
+        LOGGER.info("Inserted old password: " + oldPassword);
+        LOGGER.info("Inserted new password: " + newPassword);
+        Customer customer = customerService.changePassword(email, oldPassword, newPassword);
+        if(customer == null) {
+            throw new CustomerNotLoggedInException(email);
+        }
+        return convertToDto(customer);
+    }
+
+    @ApiOperation(
+            value = "Check customer password",
+            notes = "Customer email, old and new passwords are required. " +
+                    "Throws 400 error if email or password is not valid."
+    )
+    @RequestMapping(value = "/{id}/role", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDto changeRole(
+            @ApiParam(value = "Customer id")
+            @PathVariable long id,
+            @ApiParam(value = "New role")
+            @RequestParam String role) {
+        LOGGER.info("Customer id: " + id);
+        LOGGER.info("New role: " + role);
+        Customer customer = customerService.changeRole(id, role);
+        if(customer == null) {
+            LOGGER.info("Customer with id: " + id + " not found or role: " + role + " is not valid.");
+            throw new EntityNotUpdatedException(Customer.class, id);
+        }
+        LOGGER.info("Saved customer: " + customer);
+        return convertToDto(customer);
+    }
+
+    private CustomerDto convertToDto(Customer customer) {
+        CustomerDto customerDto = modelMapper.map(customer, CustomerDto.class);
+        return customerDto;
+    }
+
+    private Customer convertToEntity(CustomerDto customerDto) {
+        Customer customer = modelMapper.map(customerDto, Customer.class);
+        return customer;
     }
 
 }

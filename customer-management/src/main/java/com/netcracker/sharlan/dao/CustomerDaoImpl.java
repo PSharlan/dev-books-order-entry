@@ -4,6 +4,7 @@ import com.netcracker.sharlan.entities.Customer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,19 +25,14 @@ public class CustomerDaoImpl extends AbstractDao<Customer> implements CustomerDa
 
     @Override
     public Customer findByEmail(String email) {
-        Customer customer;
-        String query = "select c from Customer c where c.email = :email";
-        Query q = getEntityManager().createQuery(query);
+        Query q = getEntityManager().createQuery("select c from Customer c where c.email = :email");
         q.setParameter("email", email);
-        Object o = null;
         try{
-            o = q.getSingleResult();
-            customer = (Customer) o;
+            Customer customer = (Customer) q.getSingleResult();
             return customer;
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch(NoResultException e) {
+            return null;
         }
-        return null;
     }
 
     @Override

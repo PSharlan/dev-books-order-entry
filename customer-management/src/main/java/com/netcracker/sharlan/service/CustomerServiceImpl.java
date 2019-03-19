@@ -3,12 +3,16 @@ package com.netcracker.sharlan.service;
 import com.netcracker.sharlan.dao.CustomerDao;
 import com.netcracker.sharlan.entities.Address;
 import com.netcracker.sharlan.entities.Customer;
+import com.netcracker.sharlan.entities.Role;
+import com.netcracker.sharlan.util.HashUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -75,7 +79,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(Customer customer) {
         LOGGER.info("Saving customer : " + customer);
-        //customer.setPassword(HashUtil.stringToHash(customer.getPassword()));
+        if(findByEmail(customer.getEmail()) != null) return null;
+        customer.setPassword(HashUtil.stringToHash(customer.getPassword()));
+        System.out.println(customer.getPassword());
         for (Address address: customer.getAddresses()) {
             address.setCustomer(customer);
         }
@@ -90,6 +96,9 @@ public class CustomerServiceImpl implements CustomerService {
         if(customer.getId() == null || dao.findById(customer.getId()) == null){
             LOGGER.info("Customer with id : " + customer.getId() + " not found. Customer not updated");
             return null;
+        }
+        for (Address address: customer.getAddresses()) {
+            address.setCustomer(customer);
         }
         Customer updatedCustomer = dao.update(customer);
         LOGGER.info("Updated customer : " + updatedCustomer);
@@ -110,5 +119,42 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             LOGGER.info("Can not delete not existing customer");
         }
+    }
+
+    @Override
+    public Customer loginCustomer(String email, String password) {
+        Customer customer = findByEmail(email);
+        if(customer == null) return null;
+        boolean flag = HashUtil.compare(password,  customer.getPassword());
+        LOGGER.info("Passwords equals: " + flag);
+        if(!flag) return null;
+        return customer;
+    }
+
+    @Override
+    public Customer changePassword(String email, String oldPassword, String newPassword) {
+        Customer customer = findByEmail(email);
+        if(customer == null) return null;
+        boolean flag = HashUtil.compare(oldPassword,  customer.getPassword());
+        LOGGER.info("Passwords equals: " + flag);
+        if(!flag) return null;
+        customer.setPassword(newPassword);
+        save(customer);
+        LOGGER.info("Password updated: " + customer);
+        return customer;
+    }
+
+    @Override
+    public Customer changeRole(long id, String role) {
+        Customer customer = findById(id);
+        if (customer == null) return null;
+        if(role.toLowerCase().equals("admin")){
+            customer.setRole(Role.ADMIN);
+            return save(customer);
+        } else if(role.toLowerCase().equals("user")){
+            customer.setRole(Role.USER);
+            return save(customer);
+        }
+        return null;
     }
 }

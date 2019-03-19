@@ -1,22 +1,24 @@
 package com.netcracker.sharlan.controller;
 
-import com.netcracker.sharlan.entity.Category;
+import com.netcracker.sharlan.dto.CategoryDto;
+import com.netcracker.sharlan.entities.Category;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.CategoryService;
-import com.netcracker.sharlan.service.OfferService;
-import com.netcracker.sharlan.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/catalog/categories")
@@ -25,31 +27,31 @@ public class CategoryController {
 
     private static final Logger LOGGER = LogManager.getLogger(CategoryController.class.getName());
 
-    OfferService offerService;
-    CategoryService categoryService;
-    TagService tagService;
+    private CategoryService categoryService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public CategoryController(OfferService offerService, CategoryService categoryService, TagService tagService){
-        this.offerService = offerService;
+    public CategoryController(ModelMapper modelMapper, CategoryService categoryService){
         this.categoryService = categoryService;
-        this.tagService = tagService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(value = "Return all existing categories")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Category> getAllCategories() {
+    public List<CategoryDto> getAllCategories() {
         LOGGER.info("Search for all categories");
         List<Category> foundCategories = categoryService.findAll();
         LOGGER.info("Found categories: "  + foundCategories);
-        return foundCategories;
+        return foundCategories.stream()
+                .map(category -> convertToDto(category))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Return category by id")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Category getCategoryById(
+    public CategoryDto getCategoryById(
             @ApiParam(value = "Id of a category to lookup for", required = true)
             @PathVariable long id) {
         LOGGER.info("Searching for a category by id: " + id);
@@ -59,7 +61,7 @@ public class CategoryController {
             throw new EntityNotFoundException(Category.class, id);
         }
         LOGGER.info("Found category: " + category);
-        return category;
+        return convertToDto(category);
     }
 
     @ApiOperation(
@@ -68,13 +70,14 @@ public class CategoryController {
     )
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Category createCategory(
+    public CategoryDto createCategory(
             @ApiParam(value = "Category instance")
-            @RequestBody Category category) {
+            @Valid @RequestBody CategoryDto categoryDto) {
+        Category category = convertToEntity(categoryDto);
         LOGGER.info("Saving category: " + category);
         Category savedCategory = categoryService.save(category);
         LOGGER.info("Saved category: " + savedCategory + " with id: " + savedCategory.getId());
-        return savedCategory;
+        return convertToDto(savedCategory);
     }
 
     @ApiOperation(
@@ -83,9 +86,10 @@ public class CategoryController {
     )
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Category updatedCategory(
+    public CategoryDto updatedCategory(
             @ApiParam(value = "Category instance")
-            @RequestBody Category category) {
+            @Valid @RequestBody CategoryDto categoryDto) {
+        Category category = convertToEntity(categoryDto);
         LOGGER.info("Updating category: " + category);
         Category updatedCategory = categoryService.update(category);
         if(updatedCategory == null) {
@@ -93,7 +97,7 @@ public class CategoryController {
             throw new EntityNotUpdatedException(Category.class, category.getId());
         }
         LOGGER.info("Updated category: " + updatedCategory);
-        return updatedCategory;
+        return convertToDto(updatedCategory);
     }
 
     @ApiOperation(value = "Delete category by id")
@@ -115,9 +119,22 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createCategories(
             @ApiParam(value = "List of categories", required = true)
-            @RequestBody Set<Category> categories) {
+            @Valid @RequestBody Set<CategoryDto> categoriesDto) {
+        Set<Category> categories = categoriesDto.stream()
+                .map(category -> convertToEntity(category))
+                .collect(Collectors.toSet());
         LOGGER.info("Saving categories: " + categories);
         categoryService.saveAll(categories);
         LOGGER.info("Categories saved");
+    }
+
+    private CategoryDto convertToDto(Category category) {
+        CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
+        return categoryDto;
+    }
+
+    private Category convertToEntity(CategoryDto categoryDto) {
+        Category category = modelMapper.map(categoryDto, Category.class);
+        return category;
     }
 }

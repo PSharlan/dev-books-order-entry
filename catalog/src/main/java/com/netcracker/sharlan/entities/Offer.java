@@ -1,10 +1,28 @@
-package com.netcracker.sharlan.entity;
+package com.netcracker.sharlan.entities;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Represents an Offer, providing access to the offer's id, name,
+ * description, price, category and tags.
+ *
+ * @see BaseEntity
+ * @see Category
+ * @see Tag
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="offer")
 public class Offer extends BaseEntity{
@@ -22,69 +40,35 @@ public class Offer extends BaseEntity{
     @Column(name="price", nullable = false)
     private double price;
 
-
+    /**
+     * The default tags value is a new parameterized HashSet.
+     * Note: FetchType.LAZY
+     */
     @JoinTable(
             name = "tag_offer",
             joinColumns = { @JoinColumn(name = "offer_id") },
             inverseJoinColumns = { @JoinColumn(name = "tag_id") }
     )
     @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Tag> tags = new HashSet<Tag>();
-
-    public Offer(String name, String description, Category category, double price) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.price = price;
-    }
+    private Set<Tag> tags = new HashSet<>();
 
     /**
-     * case: for framework
+     * Constructs a new Offer with name, description, price, category and tags.
+     * Note that you have to add only already existing at Database tags.
+     *
+     * @param name - offer's name
+     * @param description - offer's description
+     * @param price - offer's price
+     * @param category - offer's category
+     * @param tags - offer's tags
      */
-    public Offer(){
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Offer(String name, String description, double price, Category category, Set<Tag> tags) {
         this.name = name;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
+        this.category = category;
+        this.price = price;
         this.tags = tags;
     }
-
 
     @Override
     public boolean equals(Object o) {

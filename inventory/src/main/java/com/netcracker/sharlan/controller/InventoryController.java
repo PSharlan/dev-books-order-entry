@@ -1,6 +1,7 @@
 package com.netcracker.sharlan.controller;
 
-import com.netcracker.sharlan.entity.Order;
+import com.netcracker.sharlan.dto.OrderDto;
+import com.netcracker.sharlan.entities.Order;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
 import com.netcracker.sharlan.service.OrderService;
@@ -9,11 +10,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -22,8 +26,14 @@ public class InventoryController {
 
     private static final Logger LOGGER = LogManager.getLogger(InventoryController.class.getName());
 
-    @Autowired
     OrderService orderService;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public InventoryController(OrderService orderService, ModelMapper modelMapper){
+        this.orderService = orderService;
+        this.modelMapper = modelMapper;
+    }
 
     @ApiOperation(
             value = "Create order",
@@ -31,29 +41,32 @@ public class InventoryController {
     )
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Order createOrder(
+    public OrderDto createOrder(
             @ApiParam(value = "Order instance", required = true)
-            @RequestBody Order order) {
+            @Valid @RequestBody OrderDto orderDto) {
+        Order order = convertToEntity(orderDto);
         LOGGER.info("Saving order: " + order);
         Order savedOrder = orderService.save(order);
         LOGGER.info("Saved order: " + order + " with id: " + order.getId());
-        return savedOrder;
+        return convertToDto(savedOrder);
     }
 
     @ApiOperation(value = "Return all existing orders")
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Order> getAllOrders() {
+    public List<OrderDto> getAllOrders() {
         LOGGER.info("Search for all orders");
         List<Order> foundOrders = orderService.findAll();
         LOGGER.info("Found orders: " + foundOrders);
-        return foundOrders;
+        return foundOrders.stream()
+                .map(order -> convertToDto(order))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Return list of an orders by customer id")
     @RequestMapping(value = "customers/{customerId}/orders", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Order> getAllOrdersByCustomerId(
+    public List<OrderDto> getAllOrdersByCustomerId(
             @ApiParam(value = "Customer id", required = true)
             @PathVariable long customerId) {
         LOGGER.info("Searching for orders by customer id: " + customerId);
@@ -63,13 +76,15 @@ public class InventoryController {
             throw new EntityNotFoundException(Order.class, customerId);
         }
         LOGGER.info("Found orders: " + customerOrders);
-        return customerOrders;
+        return customerOrders.stream()
+                .map(order -> convertToDto(order))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Return order by id")
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Order getOrderById(
+    public OrderDto getOrderById(
             @ApiParam(value = "Id of an order to lookup for", required = true)
             @PathVariable long id) {
         LOGGER.info("Searching for an order by id: " + id);
@@ -79,7 +94,7 @@ public class InventoryController {
             throw new EntityNotFoundException(Order.class, id);
         }
         LOGGER.info("Found order: " + foundOrder);
-        return foundOrder;
+        return convertToDto(foundOrder);
     }
 
     @ApiOperation(
@@ -88,15 +103,17 @@ public class InventoryController {
     )
     @RequestMapping(value = "customers/{customerId}/orders/categories/{category}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Order> getCustomerOrdersByCategory(
+    public List<OrderDto> getCustomerOrdersByCategory(
             @ApiParam(value = "Id of a customer to lookup for", required = true)
             @PathVariable long customerId,
             @ApiParam(value = "Category name", required = true)
             @PathVariable String category) {
         LOGGER.info("Searching for orders by category: " + category + " and customer id: " + customerId);
-        List<Order> foundOrdrs = orderService.findCustomerOrdersByCategory(customerId, category);
-        LOGGER.info("Found orders: " + foundOrdrs);
-        return foundOrdrs;
+        List<Order> foundOrders = orderService.findCustomerOrdersByCategory(customerId, category);
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders.stream()
+                .map(order -> convertToDto(order))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(
@@ -105,13 +122,15 @@ public class InventoryController {
     )
     @RequestMapping(value = "orders/categories/{category}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Order> getOrdersByCategory(
+    public List<OrderDto> getOrdersByCategory(
             @ApiParam(value = "Category name", required = true)
             @PathVariable String category) {
         LOGGER.info("Searching for orders by category: " + category);
-        List<Order> foundOrdrs = orderService.findOrdersByCategory(category);
-        LOGGER.info("Found orders: " + foundOrdrs);
-        return foundOrdrs;
+        List<Order> foundOrders = orderService.findOrdersByCategory(category);
+        LOGGER.info("Found orders: " + foundOrders);
+        return foundOrders.stream()
+                .map(order -> convertToDto(order))
+                .collect(Collectors.toList());
     }
     
     @ApiOperation(
@@ -120,9 +139,10 @@ public class InventoryController {
     )
     @RequestMapping(value = "/orders", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Order updatedOrder(
+    public OrderDto updatedOrder(
             @ApiParam(value = "Order instance", required = true)
-            @RequestBody Order order) {
+            @Valid @RequestBody OrderDto orderDto) {
+        Order order = convertToEntity(orderDto);
         LOGGER.info("Updating order: " + order);
         Order updatedOrder = orderService.update(order);
         if(updatedOrder == null) {
@@ -130,7 +150,7 @@ public class InventoryController {
             throw new EntityNotUpdatedException(Order.class, order.getId());
         }
         LOGGER.info("Updated order: " + updatedOrder);
-        return updatedOrder;
+        return convertToDto(updatedOrder);
     }
 
     @ApiOperation(
@@ -139,19 +159,19 @@ public class InventoryController {
     )
     @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Order updatedOrderStatus(
-            @ApiParam(value = "Payment status", required = true)
+    public OrderDto updatedOrderStatus(
+            @ApiParam(value = "Order status", required = true)
             @RequestBody String paymentStatus,
             @ApiParam(value = "Order id", required = true)
             @PathVariable long id) {
         LOGGER.info("Updating order status. Order id: " + id + " | New payment status: " + paymentStatus);
         Order updatedOrder = orderService.updateStatus(id, paymentStatus);
         if(updatedOrder == null) {
-            LOGGER.info("Can not update not existing order or not existing status");
+            LOGGER.info("Not existing order or status");
             throw new EntityNotUpdatedException(Order.class, id);
         }
         LOGGER.info("Updated order: " + updatedOrder);
-        return updatedOrder;
+        return convertToDto(updatedOrder);
     }
 
     @ApiOperation(value = "Delete order by id")
@@ -163,5 +183,15 @@ public class InventoryController {
         LOGGER.info("Deleting order by id: " + id);
         orderService.delete(id);
         LOGGER.info("Order deleted");
+    }
+
+    private OrderDto convertToDto(Order order) {
+        OrderDto orderDto = modelMapper.map(order, OrderDto.class);
+        return orderDto;
+    }
+
+    private Order convertToEntity(OrderDto orderDto) {
+        Order order = modelMapper.map(orderDto, Order.class);
+        return order;
     }
 }

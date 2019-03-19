@@ -1,10 +1,26 @@
 package com.netcracker.sharlan.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Represents an Address, providing access to the addresses id, country,
+ * city, street, house number and customer. Address have to be associated with Customer.
+ *
+ * @see BaseEntity
+ * @see Customer
+ *
+ * @author Pavel Sharlan
+ * @version  1.0
+ */
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "address")
 public class Address extends BaseEntity{
@@ -31,58 +47,6 @@ public class Address extends BaseEntity{
         this.city = city;
         this.street = street;
         this.houseNum = houseNum;
-    }
-
-    public Address(String country, String city, String street, int houseNum, Customer customer) {
-        this(country, city, street, houseNum);
-        this.customer = customer;
-    }
-
-    /**
-     * case: for frameworks
-     */
-    public Address(){
-
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public int getHouseNum() {
-        return houseNum;
-    }
-
-    public void setHouseNum(int houseNum) {
-        this.houseNum = houseNum;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     @Override

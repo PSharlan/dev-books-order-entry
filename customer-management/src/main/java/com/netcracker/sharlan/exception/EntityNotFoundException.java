@@ -3,10 +3,10 @@ package com.netcracker.sharlan.exception;
 public class EntityNotFoundException extends RuntimeException {
 
     private Class notFoundedClass;
-    private long entityId;
+    private Long entityId;
     private String searchParam;
 
-    public EntityNotFoundException(Class notFoundedClass, long entityId){
+    public EntityNotFoundException(Class notFoundedClass, Long entityId){
         this.entityId = entityId;
         this.notFoundedClass = notFoundedClass;
     }
@@ -24,11 +24,11 @@ public class EntityNotFoundException extends RuntimeException {
         this.notFoundedClass = notFoundedClass;
     }
 
-    public long getEntityId() {
+    public Long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(long entityId) {
+    public void setEntityId(Long entityId) {
         this.entityId = entityId;
     }
 

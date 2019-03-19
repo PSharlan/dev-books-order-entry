@@ -1,24 +1,28 @@
 package com.netcracker.sharlan.controller;
 
-import com.netcracker.sharlan.entity.Category;
-import com.netcracker.sharlan.entity.Offer;
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.dto.CategoryDto;
+import com.netcracker.sharlan.dto.OfferDto;
+import com.netcracker.sharlan.dto.TagDto;
+import com.netcracker.sharlan.entities.Category;
+import com.netcracker.sharlan.entities.Offer;
+import com.netcracker.sharlan.entities.Tag;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
-import com.netcracker.sharlan.service.CategoryService;
 import com.netcracker.sharlan.service.OfferService;
-import com.netcracker.sharlan.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/catalog/offers")
@@ -27,41 +31,43 @@ public class OfferController {
 
     private static final Logger LOGGER = LogManager.getLogger(OfferController.class.getName());
 
-    OfferService offerService;
-    CategoryService categoryService;
-    TagService tagService;
+    private OfferService offerService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public OfferController(OfferService offerService, CategoryService categoryService, TagService tagService){
+    public OfferController(ModelMapper modelMapper, OfferService offerService){
         this.offerService = offerService;
-        this.categoryService = categoryService;
-        this.tagService = tagService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(value = "Return all existing offers")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Set<Offer> getAllOffers() {
+    public Set<OfferDto> getAllOffers() {
         LOGGER.info("Searching for all offers");
         Set<Offer> allOffers = offerService.findAll();
         LOGGER.info("Found offers: " + allOffers);
-        return allOffers;
+        return allOffers.stream()
+                .map(offer -> convertToDto(offer))
+                .collect(Collectors.toSet());
     }
 
     @ApiOperation(value = "Return list of an offers by ids")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Offer> getOffersByIds(@RequestParam List<Integer> ids) {
+    public List<OfferDto> getOffersByIds(@RequestParam List<Integer> ids) {
         LOGGER.info("Searching for offers by ids: " + ids);
         List<Offer> foundOffers = offerService.findById(ids);
         LOGGER.info("Found offers: " + foundOffers);
-        return foundOffers;
+        return foundOffers.stream()
+                .map(offer -> convertToDto(offer))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Return offer by id")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Offer getOfferById(
+    public OfferDto getOfferById(
             @ApiParam(value = "Id of an offer to lookup for", required = true)
             @PathVariable long id) {
 
@@ -72,7 +78,7 @@ public class OfferController {
             throw new EntityNotFoundException(Offer.class, id);
         }
         LOGGER.info("Found offer: " + offer);
-        return offer;
+        return convertToDto(offer);
     }
 
     @ApiOperation(
@@ -81,13 +87,14 @@ public class OfferController {
     )
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Offer createOffer(
+    public OfferDto createOffer(
             @ApiParam(value = "Offer instance", required = true)
-            @RequestBody Offer offer) {
+            @Valid @RequestBody OfferDto offerDto) {
+        Offer offer = convertToEntity(offerDto);
         LOGGER.info("Saving offer: " + offer);
         Offer savedOffer = offerService.save(offer);
         LOGGER.info("Saved offer id: " + offer.getId());
-        return savedOffer;
+        return convertToDto(savedOffer);
     }
 
     @ApiOperation(
@@ -96,9 +103,10 @@ public class OfferController {
     )
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Offer updatedOffer(
+    public OfferDto updatedOffer(
             @ApiParam(value = "Offer instance", required = true)
-            @RequestBody Offer offer) {
+            @Valid @RequestBody OfferDto offerDto) {
+        Offer offer = convertToEntity(offerDto);
         LOGGER.info("Updating offer: " + offer);
         Offer updatedOffer = offerService.update(offer);
         if(updatedOffer == null) {
@@ -106,7 +114,7 @@ public class OfferController {
             throw new EntityNotUpdatedException(Offer.class, offer.getId());
         }
         LOGGER.info("Updated offer: " + offer);
-        return updatedOffer;
+        return convertToDto(updatedOffer);
     }
 
     @ApiOperation(
@@ -119,7 +127,8 @@ public class OfferController {
             @ApiParam(value = "Id of an offer to update", required = true)
             @PathVariable long id,
             @ApiParam(value = "Category instance", required = true)
-            @RequestBody Category category) {
+            @Valid @RequestBody CategoryDto categoryDto) {
+        Category category = convertToEntity(categoryDto);
         LOGGER.info("New category: " + category + " for offer id: " + id );
         offerService.updateCategory(offerService.findById(id), category);
     }
@@ -134,7 +143,8 @@ public class OfferController {
             @ApiParam(value = "Id of an offer to update", required = true)
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
-            @RequestBody Tag tag) {
+            @Valid @RequestBody TagDto tagDto) {
+        Tag tag = convertToEntity(tagDto);
         LOGGER.info("New tag: " + tag + " for offer id: " + id );
         offerService.addTag(offerService.findById(id), tag);
     }
@@ -149,7 +159,8 @@ public class OfferController {
             @ApiParam(value = "Id of an offer to update", required = true)
             @PathVariable long id,
             @ApiParam(value = "Tag instance", required = true)
-            @RequestBody Tag tag) {
+            @RequestBody TagDto tagDto) {
+        Tag tag = convertToEntity(tagDto);
         LOGGER.info("Removing tag: " + tag + " for offer id: " + id );
         offerService.deleteTag(offerService.findById(id), tag);
     }
@@ -168,22 +179,54 @@ public class OfferController {
     @ApiOperation(value = "Return offers filtered by parameters")
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Set<Offer> getOffersByParams(
+    public Set<OfferDto> getOffersByParams(
             @ApiParam(value = "Category id")
             @RequestParam long categoryId,
             @ApiParam(value = "Tag id")
-            @RequestParam long tagId,
+            @RequestParam List<Long> tagIds,
             @ApiParam(value = "Min price")
             @RequestParam double minPrice,
             @ApiParam(value = "Max price")
             @RequestParam double maxPrice) {
         LOGGER.info("Search an offers by params. " +
                 "Category id: " + categoryId +
-                " | Tag id: " + tagId +
+                " | Tag ids: " + tagIds +
                 " | Min price: " + minPrice +
                 " | Max price: " + maxPrice);
-        Set<Offer> foundOffers = offerService.findByParams(categoryId, tagId, minPrice, maxPrice);
+        Set<Offer> foundOffers = offerService.findByParams(categoryId, tagIds, minPrice, maxPrice);
         LOGGER.info("Found offers: " + foundOffers);
-        return foundOffers;
+        return foundOffers.stream()
+                .map(offer -> convertToDto(offer))
+                .collect(Collectors.toSet());
+    }
+
+    private OfferDto convertToDto(Offer offer) {
+        OfferDto offerDto = modelMapper.map(offer, OfferDto.class);
+        return offerDto;
+    }
+
+    private CategoryDto convertToDto(Category category) {
+        CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
+        return categoryDto;
+    }
+
+    private TagDto convertToDto(Tag tag) {
+        TagDto tagDto = modelMapper.map(tag, TagDto.class);
+        return tagDto;
+    }
+
+    private Offer convertToEntity(OfferDto offerDto) {
+        Offer offer = modelMapper.map(offerDto, Offer.class);
+        return offer;
+    }
+
+    private Category convertToEntity(CategoryDto categoryDto) {
+        Category category = modelMapper.map(categoryDto, Category.class);
+        return category;
+    }
+
+    private Tag convertToEntity(TagDto tagDto) {
+        Tag tag = modelMapper.map(tagDto, Tag.class);
+        return tag;
     }
 }

@@ -1,9 +1,9 @@
 package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dao.OfferDao;
-import com.netcracker.sharlan.entity.Category;
-import com.netcracker.sharlan.entity.Offer;
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.entities.Category;
+import com.netcracker.sharlan.entities.Offer;
+import com.netcracker.sharlan.entities.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,28 +119,36 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Set<Offer> findByParams(long categoryId, long tagId, double minPrice, double maxPrice) {
-        Tag tagForFilter = null;
-        if(tagId != 0){
-            tagForFilter = tagService.findById(tagId);
+    public Set<Offer> findByParams(long categoryId, List<Long> tagIds, double minPrice, double maxPrice) {
+        List<Tag> tagsForFilter = new ArrayList<>();
+        if(!tagIds.contains(new Long(0))){
+            for (long id : tagIds) {
+                tagsForFilter.add(tagService.findById(id));
+            }
         }
 
         LOGGER.info("Searching for offers by parameters: " +
                 "category id = " + categoryId +
-                " | tag id = " + tagId +
+                " | tag ids = " + tagIds +
                 " | minimum price = " + minPrice +
                 " | maximum price = " + maxPrice);
+        LOGGER.info("Found tags: " + tagsForFilter);
 
         Set<Offer> allOffers = offerDao.findAll();
         Set<Offer> filteredOffers = new HashSet<>();
         for (Offer offer: allOffers) {
             if(categoryId == 0 || offer.getCategory().getId() == categoryId){
-                if(minPrice == 0 || offer.getPrice() > minPrice){
-                    if(maxPrice == 0 || offer.getPrice() < maxPrice){
-                        if(tagForFilter == null || offer.getTags().contains(tagForFilter)) {
+                if(minPrice == 0 || offer.getPrice() >= minPrice){
+                    if(maxPrice == 0 || offer.getPrice() <= maxPrice){
+                        if(tagsForFilter.size() == 0) {
                             filteredOffers.add(offer);
+                        } else {
+                            if(offer.getTags().containsAll(tagsForFilter)){
+                                filteredOffers.add(offer);
+                            }
                         }
                     }
+
                 }
 
             }

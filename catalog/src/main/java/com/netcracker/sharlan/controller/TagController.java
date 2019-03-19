@@ -1,23 +1,25 @@
 package com.netcracker.sharlan.controller;
 
-import com.netcracker.sharlan.entity.Category;
-import com.netcracker.sharlan.entity.Tag;
+import com.netcracker.sharlan.dto.TagDto;
+import com.netcracker.sharlan.entities.Category;
+import com.netcracker.sharlan.entities.Tag;
 import com.netcracker.sharlan.exception.EntityNotFoundException;
 import com.netcracker.sharlan.exception.EntityNotUpdatedException;
-import com.netcracker.sharlan.service.CategoryService;
-import com.netcracker.sharlan.service.OfferService;
 import com.netcracker.sharlan.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/catalog/tags")
@@ -26,31 +28,31 @@ public class TagController {
 
     private static final Logger LOGGER = LogManager.getLogger(TagController.class.getName());
 
-    OfferService offerService;
-    CategoryService categoryService;
-    TagService tagService;
+    private TagService tagService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public TagController(OfferService offerService, CategoryService categoryService, TagService tagService){
-        this.offerService = offerService;
-        this.categoryService = categoryService;
+    public TagController(ModelMapper modelMapper, TagService tagService){
         this.tagService = tagService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(value = "Return all existing tags")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<Tag> getAllTags() {
+    public List<TagDto> getAllTags() {
         LOGGER.info("Search for all tags");
         List<Tag> foundTags = tagService.findAll();
         LOGGER.info("Found tags: "  + foundTags);
-        return foundTags;
+        return foundTags.stream()
+                .map(tag -> convertToDto(tag))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Return tag by id")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Tag getTagById(
+    public TagDto getTagById(
             @ApiParam(value = "Id of tag to lookup for", required = true)
             @PathVariable long id) {
         LOGGER.info("Search for a tag with id: " + id);
@@ -60,7 +62,7 @@ public class TagController {
             throw new EntityNotFoundException(Tag.class, id);
         }
         LOGGER.info("Found tag: " + tag);
-        return tag;
+        return convertToDto(tag);
     }
 
     @ApiOperation(
@@ -69,9 +71,10 @@ public class TagController {
     )
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Tag updateTag(
+    public TagDto updateTag(
             @ApiParam(value = "Tag instance")
-            @RequestBody Tag tag) {
+            @Valid @RequestBody TagDto tagDto) {
+        Tag tag = convertToEntity(tagDto);
         LOGGER.info("Updating tag: " + tag);
         LOGGER.info("Tag offers: " + tag.getOffers());
         Tag updatedTag = tagService.update(tag);
@@ -80,7 +83,7 @@ public class TagController {
             throw new EntityNotUpdatedException(Category.class, tag.getId());
         }
         LOGGER.info("Updated tag: " + updatedTag);
-        return updatedTag;
+        return convertToDto(updatedTag);
     }
 
     @ApiOperation(value = "Delete tag by id")
@@ -100,13 +103,14 @@ public class TagController {
     )
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Tag createTag(
+    public TagDto createTag(
             @ApiParam(value = "Tag instance")
-            @RequestBody Tag tag) {
+            @Valid @RequestBody TagDto tagDto) {
+        Tag tag = convertToEntity(tagDto);
         LOGGER.info("Saving tag: " + tag);
         Tag savedTag = tagService.save(tag);
         LOGGER.info("Saved tag: " + tag + " with id: " + tag.getId());
-        return savedTag;
+        return convertToDto(savedTag);
     }
 
     @ApiOperation(
@@ -117,9 +121,22 @@ public class TagController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createTags(
             @ApiParam(value = "List of tags", required = true)
-            @RequestBody Set<Tag> tags) {
+            @Valid @RequestBody Set<TagDto> tagsDto) {
+        Set<Tag> tags = tagsDto.stream()
+                .map(tag -> convertToEntity(tag))
+                .collect(Collectors.toSet());
         LOGGER.info("Saving tags: " + tags);
         tagService.saveAll(tags);
         LOGGER.info("Tags saved");
+    }
+
+    private TagDto convertToDto(Tag tag) {
+        TagDto tagDto = modelMapper.map(tag, TagDto.class);
+        return tagDto;
+    }
+
+    private Tag convertToEntity(TagDto tagDto) {
+        Tag tag = modelMapper.map(tagDto, Tag.class);
+        return tag;
     }
 }

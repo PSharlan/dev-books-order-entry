@@ -12,17 +12,23 @@ import com.netcracker.sharlan.entities.Customer;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { AppConfig.class}, loader = AnnotationConfigContextLoader.class)
+@SqlConfig(dataSource = "pgTestDataSource")
+@Sql(value = {"/create.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class CustomerServiceTest {
 
     @Autowired
@@ -44,11 +50,6 @@ public class CustomerServiceTest {
         customer = new Customer("Customer Name","Customer Last Name",
                 "email@gmail.com", "12345678", Role.ADMIN, new Date(1990, 5, 20 ));
 
-    }
-
-    @AfterEach
-    public void breakDown(){
-        customerService.delete(customer);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.netcracker.sharlan.services;
+package com.netcracker.sharlan.service;
 
 import com.netcracker.sharlan.dto.catalog.OfferDto;
 import com.netcracker.sharlan.dto.inventory.OrderDto;
