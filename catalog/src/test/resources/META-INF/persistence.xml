@@ -11,13 +11,13 @@
     -->
 
     <persistence-unit name="catalogPersistenceUnit">
-        <class>com.netcracker.sharlan.entities.Offer</class>
-        <class>com.netcracker.sharlan.entities.Category</class>
-        <class>com.netcracker.sharlan.entities.Tag</class>
-        <class>com.netcracker.sharlan.service.CategoryServiceImpl</class>
-        <class>com.netcracker.sharlan.service.TagServiceImpl</class>
-        <class>com.netcracker.sharlan.service.OfferServiceImpl</class>
-        <class>com.netcracker.sharlan.config.AppConfig</class>
+        <class>com.devbooks.sharlan.entities.Offer</class>
+        <class>com.devbooks.sharlan.entities.Category</class>
+        <class>com.devbooks.sharlan.entities.Tag</class>
+        <class>com.devbooks.sharlan.service.CategoryServiceImpl</class>
+        <class>com.devbooks.sharlan.service.TagServiceImpl</class>
+        <class>com.devbooks.sharlan.service.OfferServiceImpl</class>
+        <class>AppConfig</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

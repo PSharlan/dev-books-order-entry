@@ -12,6 +12,7 @@
         <module>inventory</module>
         <module>customer-management</module>
         <module>processor</module>
+        <module>delivery</module>
     </modules>
     <packaging>pom</packaging>
 

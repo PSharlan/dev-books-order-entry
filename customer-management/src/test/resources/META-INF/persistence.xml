@@ -11,9 +11,9 @@
     -->
 
     <persistence-unit name="customerPersistenceUnit">
-        <class>com.netcracker.sharlan.entities.Role</class>
-        <class>com.netcracker.sharlan.entities.Customer</class>
-        <class>com.netcracker.sharlan.entities.Address</class>
+        <class>com.devbooks.sharlan.entities.Role</class>
+        <class>com.devbooks.sharlan.entities.Customer</class>
+        <class>com.devbooks.sharlan.entities.Address</class>
 
         <properties>
 
