@@ -12,6 +12,7 @@ import com.devbooks.sharlan.exception.EntityNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/v1/catalog/offers")
@@ -44,15 +46,15 @@ public class OfferController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping(
-            value = "/image",
-            produces = MediaType.IMAGE_JPEG_VALUE
-    )
-    public byte[] getImageWithMediaType() throws IOException {
-        InputStream in = getClass().getClassLoader()
-                .getResourceAsStream("images/image.jpg");
-        return IOUtils.toByteArray(in);
-    }
+//    @GetMapping(
+//            value = "/image",
+//            produces = MediaType.IMAGE_JPEG_VALUE
+//    )
+//    public byte[] getImageWithMediaType() throws IOException {
+//        InputStream in = getClass().getClassLoader()
+//                .getResourceAsStream("images/image.jpg");
+//        return IOUtils.toByteArray(in);
+//    }
 
     @ApiOperation(value = "Return all existing offers")
     @RequestMapping(method = RequestMethod.GET)
@@ -122,6 +124,7 @@ public class OfferController {
             @Valid @RequestBody OfferDto offerDto) {
         Offer offer = convertToEntity(offerDto);
         LOGGER.info("Updating offer: " + offer);
+        LOGGER.info("Updating offer tags: " + offer.getTags());
         Offer updatedOffer = offerService.update(offer);
         if(updatedOffer == null) {
             LOGGER.info("Can not update not existing offer");

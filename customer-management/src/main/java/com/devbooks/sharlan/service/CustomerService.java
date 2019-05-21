@@ -23,6 +23,8 @@ public interface CustomerService {
      */
     Customer findById(long id);
 
+    Set<Customer> findByIds(Set<Long> ids);
+
     /**
      * Returns all customers.
      *

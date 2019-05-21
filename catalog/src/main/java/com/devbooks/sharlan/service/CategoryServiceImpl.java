@@ -2,6 +2,7 @@ package com.devbooks.sharlan.service;
 
 import com.devbooks.sharlan.dao.CategoryDao;
 import com.devbooks.sharlan.entities.Category;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,15 @@ import java.util.Set;
 
 
 @Service
-@Transactional
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private static final Logger LOGGER = LogManager.getLogger(CategoryServiceImpl.class.getName());
 
     private CategoryDao dao;
 
-    @Autowired
-    public CategoryServiceImpl(CategoryDao dao){
-        this.dao = dao;
-    }
-
     @Override
+    @Transactional
     public Category findById(long id) {
         LOGGER.info("Searching for a category by id: " + id);
         Category category = dao.findById(id);
@@ -34,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public Category save(Category category) {
         LOGGER.info("Saving category : " + category);
         category = dao.save(category);
@@ -42,6 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void saveAll(Set<Category> categories) {
         LOGGER.info("Saving categories : " + categories);
         dao.saveAll(categories);
@@ -49,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public Category update(Category category) {
         LOGGER.info("Updating category : " + category);
         if(category.getId() == null || dao.findById(category.getId()) == null){
@@ -61,11 +61,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void delete(Category category) {
         delete(category.getId());
     }
 
     @Override
+    @Transactional
     public List<Category> findAll() {
         LOGGER.info("Searching for all categories");
         List<Category> list = dao.findAll();
@@ -74,6 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         LOGGER.info("Deleting category with id: " + id);
         dao.delete(id);

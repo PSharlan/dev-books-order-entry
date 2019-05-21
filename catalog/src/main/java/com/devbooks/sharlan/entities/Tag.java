@@ -14,7 +14,6 @@ import java.util.Set;
  * Represents a Tag, providing access to the category id, name and
  * associated offers.
  *
- * @see BaseEntity
  * @see Offer
  *
  * @author Pavel Sharlan
@@ -35,7 +34,7 @@ public class Tag extends BaseEntity {
      * Note: FetchType.LAZY
      */
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags", cascade = CascadeType.ALL)
     private Set<Offer> offers = new HashSet<Offer>();
 
     public Tag(String name){

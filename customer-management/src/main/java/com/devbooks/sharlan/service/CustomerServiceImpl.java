@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,6 +37,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
         LOGGER.info("Founded customer: " + customer);
         return customer;
+    }
+
+    @Override
+    public Set<Customer> findByIds(Set<Long> ids) {
+        return ids.stream().map(id -> {
+            Customer c = dao.findById(id);
+            return c;
+        }).collect(Collectors.toSet());
     }
 
     @Override

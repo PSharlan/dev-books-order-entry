@@ -85,6 +85,15 @@ public class CustomerController {
         return convertToDto(foundCustomer);
     }
 
+    @ApiOperation(value = "Return list of a customers by ids")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Set<CustomerDto> getCustomersByIds(@RequestParam Set<Long> ids) {
+        LOGGER.info("ids: " + ids);
+        Set<Customer> foundCustomers = customerService.findByIds(ids);
+        return foundCustomers.stream().map(customer -> convertToDto(customer)).collect(Collectors.toSet());
+    }
+
     @ApiOperation(value = "Return customer by email")
     @RequestMapping(value = "/email/{email}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)

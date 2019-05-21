@@ -52,10 +52,6 @@ public class Offer extends BaseEntity{
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Tag> tags = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer")
-    @JsonIgnore
-    private Set<Comment> comments = new HashSet<>();
-
     /**
      * Constructs a new Offer with name, description, price, category and tags.
      * Note that you have to add only already existing at Database tags.

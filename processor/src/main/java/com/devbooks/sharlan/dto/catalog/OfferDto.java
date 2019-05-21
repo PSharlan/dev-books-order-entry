@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ public class OfferDto {
     private String name;
     private String description;
     private CategoryDto category;
+    private Set<TagDto> tags;
     private double price;
 
     public OfferDto() {

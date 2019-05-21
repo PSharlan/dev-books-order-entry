@@ -1,5 +1,7 @@
 package com.devbooks.sharlan.controller;
 
+import com.devbooks.sharlan.dto.catalog.CommentDto;
+import com.devbooks.sharlan.dto.catalog.CompositionOfOfferAndCommentsDto;
 import com.devbooks.sharlan.dto.catalog.OfferDto;
 import com.devbooks.sharlan.dto.customer.CustomerDto;
 import com.devbooks.sharlan.dto.inventory.OrderDto;
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/processor")
@@ -231,5 +234,49 @@ public class ProcessorController {
     }
 
 
+    @ApiOperation(
+            value = "Return all info about offer and comments",
+            notes = "Offer id required"
+    )
+    @RequestMapping(value = "/offers/{id}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public CompositionOfOfferAndCommentsDto getOfferAndCommentsByOfferId(
+            @ApiParam(value = "Offer id", required = true)
+            @PathVariable long id) {
+
+        //find an Offer instance w/o comments!
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(catalogUrl + "/offers/" + id);
+        OfferDto offer = restTemplate.exchange(uriBuilder.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<OfferDto>() {
+                }).getBody();
+        Long offerId = offer.getId();
+
+        //get comments by offer id
+        UriComponentsBuilder uriBuilder2 = UriComponentsBuilder.fromHttpUrl(catalogUrl + "/offers/" + id + "/comments");
+        Set<CommentDto> comments = restTemplate.exchange(uriBuilder2.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<Set<CommentDto>>() {
+                }).getBody();
+
+        Set<Long> customerIds = comments.stream().map(comment -> comment.getCustomerId()).collect(Collectors.toSet());
+        LOGGER.info(customerIds);
+
+        if(customerIds.size() == 0) return new CompositionOfOfferAndCommentsDto(offer, comments, null);
+
+        StringBuilder sb = new StringBuilder("?");
+        Iterator<Long> iter = customerIds.iterator();
+        while(iter.hasNext()){
+            sb.append("ids=");
+            sb.append(iter.next().toString());
+            if(iter.hasNext()) sb.append("&");
+        }
+
+        UriComponentsBuilder uriBuilder3 = UriComponentsBuilder.fromHttpUrl(customerUrl + "/list" + sb.toString());
+        LOGGER.info(uriBuilder3.toUriString());
+        Set<CustomerDto> customers = restTemplate.exchange(uriBuilder3.toUriString(),
+                HttpMethod.GET, null, new ParameterizedTypeReference<Set<CustomerDto>>() {
+                }).getBody();
+
+        return new CompositionOfOfferAndCommentsDto(offer, comments, customers);
+    }
 
 }
